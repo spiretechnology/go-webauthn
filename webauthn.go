@@ -28,6 +28,9 @@ func New(options Options) WebAuthn {
 	if options.Codec == nil {
 		options.Codec = base64.RawURLEncoding
 	}
+	if options.Challenges == nil {
+		options.Challenges = store.NewChallengesInMemory()
+	}
 	return &webauthn{options}
 }
 

@@ -109,9 +109,15 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, userID string, res *R
 	// Store the credential and return successfully
 	//================================================================================
 
+	// Decode the credential ID
+	credentialIDBytes, err := w.options.Codec.DecodeString(res.CredentialID)
+	if err != nil {
+		return nil, errutil.Wrapf(err, "decoding credential ID")
+	}
+
 	// Store the credential for the user
 	cred := store.Credential{
-		ID:           res.CredentialID,
+		ID:           credentialIDBytes,
 		Type:         "public-key",
 		PublicKey:    publicKeyBytes,
 		PublicKeyAlg: res.PublicKeyAlg,

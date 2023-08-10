@@ -15,8 +15,14 @@ type AuthenticationResponse struct {
 type AuthenticationResult struct{}
 
 func (w *webauthn) VerifyAuthentication(ctx context.Context, userID string, res *AuthenticationResponse) (*AuthenticationResult, error) {
+	// Decode the received credential ID
+	credentialID, err := w.options.Codec.DecodeString(res.CredentialID)
+	if err != nil {
+		return nil, errutil.Wrapf(err, "decoding credential ID")
+	}
+
 	// Get the credential with the user and ID
-	credential, err := w.options.Credentials.GetCredential(ctx, userID, res.CredentialID)
+	credential, err := w.options.Credentials.GetCredential(ctx, userID, credentialID)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "getting credential")
 	}

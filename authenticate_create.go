@@ -43,7 +43,7 @@ func (w *webauthn) CreateAuthentication(ctx context.Context, userID string) (*Au
 	for _, cred := range credentials {
 		res.AllowCredentials = append(res.AllowCredentials, AllowedCredential{
 			Type: cred.Type,
-			ID:   cred.ID,
+			ID:   w.options.Codec.EncodeToString(cred.ID),
 		})
 	}
 	return &res, nil

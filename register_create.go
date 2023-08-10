@@ -8,10 +8,16 @@ import (
 	"github.com/spiretechnology/go-webauthn/spec"
 )
 
+type RegistrationUser struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	DisplayName string `json:"displayName"`
+}
+
 type RegistrationChallenge struct {
 	Challenge        string                 `json:"challenge"`
 	RP               spec.RelyingParty      `json:"rp"`
-	User             spec.User              `json:"user"`
+	User             RegistrationUser       `json:"user"`
 	PubKeyCredParams []spec.PubKeyCredParam `json:"pubKeyCredParams"`
 }
 
@@ -25,9 +31,9 @@ func (w *webauthn) CreateRegistration(ctx context.Context, userID string) (*Regi
 		return nil, errutil.Wrap(ErrUserNotFound)
 	}
 
-	// Wrap the user in a spec.User
-	specUser := spec.User{
-		ID:          []byte(user.ID),
+	// Format the user
+	registrationUser := RegistrationUser{
+		ID:          user.ID,
 		Name:        user.Name,
 		DisplayName: user.DisplayName,
 	}
@@ -46,7 +52,7 @@ func (w *webauthn) CreateRegistration(ctx context.Context, userID string) (*Regi
 	return &RegistrationChallenge{
 		Challenge:        w.options.Codec.EncodeToString(challengeBytes[:]),
 		RP:               w.options.RP,
-		User:             specUser,
+		User:             registrationUser,
 		PubKeyCredParams: w.getPubKeyCredParams(),
 	}, nil
 }

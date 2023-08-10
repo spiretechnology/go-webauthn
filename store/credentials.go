@@ -3,7 +3,7 @@ package store
 import "context"
 
 type Credential struct {
-	ID           string
+	ID           []byte
 	Type         string
 	PublicKey    []byte
 	PublicKeyAlg int
@@ -11,6 +11,6 @@ type Credential struct {
 
 type Credentials interface {
 	GetCredentials(ctx context.Context, userID string) ([]Credential, error)
-	GetCredential(ctx context.Context, userID, credentialID string) (*Credential, error)
+	GetCredential(ctx context.Context, userID string, credentialID []byte) (*Credential, error)
 	StoreCredential(ctx context.Context, userID string, credential Credential) error
 }
