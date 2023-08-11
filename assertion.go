@@ -2,15 +2,15 @@ package webauthn
 
 import (
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/spec"
+	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
 // AuthenticatorAssertionResponse is an authentication response.
 type AuthenticatorAssertionResponse struct {
-	AuthenticatorData string `json:"authenticatorData"`
-	ClientDataJSON    string `json:"clientDataJSON"`
-	Signature         string `json:"signature"`
-	UserHandle        string `json:"userHandle"`
+	AuthenticatorData string  `json:"authenticatorData"`
+	ClientDataJSON    string  `json:"clientDataJSON"`
+	Signature         string  `json:"signature"`
+	UserHandle        *string `json:"userHandle"`
 }
 
 func (a *AuthenticatorAssertionResponse) Decode(codec Codec) (*spec.AuthenticatorAssertionResponse, error) {
@@ -33,9 +33,12 @@ func (a *AuthenticatorAssertionResponse) Decode(codec Codec) (*spec.Authenticato
 	}
 
 	// Decode the user handle
-	userHandleBytes, err := codec.DecodeString(a.UserHandle)
-	if err != nil {
-		return nil, errutil.Wrapf(err, "decoding user handle")
+	var userHandleBytes []byte
+	if a.UserHandle != nil {
+		userHandleBytes, err = codec.DecodeString(*a.UserHandle)
+		if err != nil {
+			return nil, errutil.Wrapf(err, "decoding user handle")
+		}
 	}
 
 	// Wrap it in the spec type

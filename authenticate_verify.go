@@ -4,17 +4,37 @@ import (
 	"context"
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/spec"
+	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
 type AuthenticationResponse struct {
+	Challenge    string                         `json:"challenge"`
 	CredentialID string                         `json:"credentialId"`
 	Response     AuthenticatorAssertionResponse `json:"response"`
 }
 
 type AuthenticationResult struct{}
 
-func (w *webauthn) VerifyAuthentication(ctx context.Context, userID string, res *AuthenticationResponse) (*AuthenticationResult, error) {
+func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *AuthenticationResponse) (*AuthenticationResult, error) {
+	// Decode the challenge from the response
+	challengeBytesSlice, err := w.options.Codec.DecodeString(res.Challenge)
+	if err != nil {
+		return nil, errutil.Wrapf(err, "decoding challenge")
+	}
+	challengeBytes := [32]byte(challengeBytesSlice)
+	ok, err := w.options.Challenges.HasChallenge(ctx, user, challengeBytes)
+	if err != nil {
+		return nil, errutil.Wrapf(err, "checking challenge")
+	}
+	if !ok {
+		return nil, errutil.Wrap(ErrUnrecognizedChallenge)
+	}
+
+	// Remove the challenge from the store. It's no longer needed.
+	if err := w.options.Challenges.RemoveChallenge(ctx, user, challengeBytes); err != nil {
+		return nil, errutil.Wrapf(err, "removing challenge")
+	}
+
 	// Decode the received credential ID
 	credentialID, err := w.options.Codec.DecodeString(res.CredentialID)
 	if err != nil {
@@ -22,7 +42,7 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, userID string, res 
 	}
 
 	// Get the credential with the user and ID
-	credential, err := w.options.Credentials.GetCredential(ctx, userID, credentialID)
+	credential, err := w.options.Credentials.GetCredential(ctx, user, credentialID)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "getting credential")
 	}
@@ -58,21 +78,12 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, userID string, res 
 	}
 
 	// Verify that this challenge was issued to the client
-	challengeBytes, err := clientData.DecodeChallenge()
+	clientDataChallengeBytes, err := clientData.DecodeChallenge()
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding challenge")
 	}
-	ok, err := w.options.Challenges.HasChallenge(ctx, userID, challengeBytes)
-	if err != nil {
-		return nil, errutil.Wrapf(err, "checking challenge")
-	}
-	if !ok {
-		return nil, errutil.Wrap(ErrUnrecognizedChallenge)
-	}
-
-	// Remove the challenge from the store. It's no longer needed.
-	if err := w.options.Challenges.RemoveChallenge(ctx, userID, challengeBytes); err != nil {
-		return nil, errutil.Wrapf(err, "removing challenge")
+	if clientDataChallengeBytes != challengeBytes {
+		return nil, errutil.Wrapf(err, "invalid challenge")
 	}
 
 	//================================================================================

@@ -3,7 +3,6 @@ package webauthn
 import (
 	"context"
 
-	"github.com/spiretechnology/go-webauthn/internal/challenge"
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
 )
 
@@ -18,21 +17,24 @@ type AllowedCredential struct {
 	ID   string `json:"id"`
 }
 
-func (w *webauthn) CreateAuthentication(ctx context.Context, userID string) (*AuthenticationChallenge, error) {
+func (w *webauthn) CreateAuthentication(ctx context.Context, user User) (*AuthenticationChallenge, error) {
 	// Get all credentials for the user
-	credentials, err := w.options.Credentials.GetCredentials(ctx, userID)
+	credentials, err := w.options.Credentials.GetCredentials(ctx, user)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "getting credentials")
 	}
+	if len(credentials) == 0 {
+		return nil, errutil.Wrap(ErrNoCredentials)
+	}
 
 	// Generate the random challenge
-	challengeBytes, err := challenge.GenerateChallenge()
+	challengeBytes, err := w.options.ChallengeFunc()
 	if err != nil {
 		return nil, errutil.Wrapf(err, "generating challenge")
 	}
 
 	// Store the challenge in the challenge store
-	if err := w.options.Challenges.StoreChallenge(ctx, userID, challengeBytes); err != nil {
+	if err := w.options.Challenges.StoreChallenge(ctx, user, challengeBytes); err != nil {
 		return nil, errutil.Wrapf(err, "storing challenge")
 	}
 

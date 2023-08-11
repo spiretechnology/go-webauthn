@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+    <head>
+        <script>
+            function encode(buffer) {
+                let binary = '';
+                const bytes = new Uint8Array(buffer);
+                for (let i = 0; i < bytes.byteLength; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                return btoa(binary)
+                    .replace(/\+/g, '-')
+                    .replace(/\//g, '_')
+                    .replace(/=/g, '');
+            }
+
+            function generateChallenge() {
+                const data = new Uint8Array(32);
+                crypto.getRandomValues(data);
+                return data;
+            }
+
+            let credID = 0;
+
+            async function register() {
+                const challenge = generateChallenge();
+                const cred = await navigator.credentials.create({
+                    publicKey: {
+                        rp: { id: 'localhost', name: 'Test' },
+                        user: {
+                            id: new Uint8Array([0x01, 0x02, 0x03, 0x04]),
+                            name: 'test',
+                            displayName: 'Test'
+                        },
+                        // authenticatorSelection: {
+                        //     authenticatorAttachment: 'platform',
+                        //     // userVerification: 'preferred',
+                        //     requireResidentKey: true,
+                        // },
+                        // authenticatorSelection: {
+                        //     // authenticatorAttachment: 'cross-platform',
+                        //     // userVerification: 'preferred',
+                        //     // requireResidentKey: false,
+                        // },
+                        pubKeyCredParams: [
+                            { type: 'public-key', alg: -7 },
+                            { type: 'public-key', alg: -257},
+                        ],
+                        challenge: challenge,
+                    },
+                });
+                credID = cred.rawId;
+                console.log(JSON.stringify({
+                    challenge: encode(challenge),
+                    credentialId: encode(cred.rawId),
+                    response: {
+                        clientDataJSON: encode(cred.response.clientDataJSON),
+                        attestationObject: encode(cred.response.attestationObject),
+                    },
+                    publicKey: encode(cred.response.getPublicKey()),
+                    publicKeyAlg: cred.response.getPublicKeyAlgorithm(),
+                }));
+            }
+
+            async function authenticate() {
+                const challenge = generateChallenge();
+                const cred = await navigator.credentials.get({
+                    publicKey: {
+                        challenge: challenge,
+                        rpId: 'localhost',
+                        allowCredentials: [{ type: 'public-key', id: credID }]
+                    },
+                });
+                console.log(JSON.stringify({
+                    challenge: encode(challenge),
+                    credentialId: encode(cred.rawId),
+                    response: {
+                        authenticatorData: encode(cred.response.authenticatorData),
+                        clientDataJSON: encode(cred.response.clientDataJSON),
+                        signature: encode(cred.response.signature),
+                        userHandle: cred.response.userHandle
+                            ? encode(cred.response.userHandle)
+                            : null,
+                    },
+                }));
+            }
+        </script>
+    </head>
+    <body>
+        <button onclick="register()">Register</button> <br />
+        <button onclick="authenticate()">Authenticate</button>
+    </body>
+</html>

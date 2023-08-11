@@ -10,5 +10,6 @@ var (
 	ErrSignatureMismatch     = errors.New("signature mismatch")
 	ErrUserNotFound          = errors.New("user not found")
 	ErrCredentialNotFound    = errors.New("credential not found")
+	ErrNoCredentials         = errors.New("user has no credential")
 	ErrUnrecognizedChallenge = errors.New("unrecognized challenge")
 )

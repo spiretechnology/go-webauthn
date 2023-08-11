@@ -1,4 +1,4 @@
-package spec
+package webauthn
 
 // RelyingParty is the ID and name or the relying party.
 type RelyingParty struct {
