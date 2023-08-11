@@ -37,6 +37,6 @@ Make sure to store all the fields provided in the `webauthn.Credential` struct i
 ```go
 wa := webauthn.New(webauthn.Options{
     RP:          webauthn.RelyingParty{ID: "mycompany.com", Name: "My Company"},
-	Credentials: &credentials,
+    Credentials: &credentials,
 })
 ```
