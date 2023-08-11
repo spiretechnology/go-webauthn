@@ -15,14 +15,14 @@ type AuthenticationResponse struct {
 
 type AuthenticationResult struct{}
 
-func (w *webauthn) VerifyAuthentication(ctx context.Context, userID string, res *AuthenticationResponse) (*AuthenticationResult, error) {
+func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *AuthenticationResponse) (*AuthenticationResult, error) {
 	// Decode the challenge from the response
 	challengeBytesSlice, err := w.options.Codec.DecodeString(res.Challenge)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding challenge")
 	}
 	challengeBytes := [32]byte(challengeBytesSlice)
-	ok, err := w.options.Challenges.HasChallenge(ctx, userID, challengeBytes)
+	ok, err := w.options.Challenges.HasChallenge(ctx, user, challengeBytes)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "checking challenge")
 	}
@@ -31,7 +31,7 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, userID string, res 
 	}
 
 	// Remove the challenge from the store. It's no longer needed.
-	if err := w.options.Challenges.RemoveChallenge(ctx, userID, challengeBytes); err != nil {
+	if err := w.options.Challenges.RemoveChallenge(ctx, user, challengeBytes); err != nil {
 		return nil, errutil.Wrapf(err, "removing challenge")
 	}
 
@@ -42,7 +42,7 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, userID string, res 
 	}
 
 	// Get the credential with the user and ID
-	credential, err := w.options.Credentials.GetCredential(ctx, userID, credentialID)
+	credential, err := w.options.Credentials.GetCredential(ctx, user, credentialID)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "getting credential")
 	}

@@ -17,9 +17,9 @@ type AllowedCredential struct {
 	ID   string `json:"id"`
 }
 
-func (w *webauthn) CreateAuthentication(ctx context.Context, userID string) (*AuthenticationChallenge, error) {
+func (w *webauthn) CreateAuthentication(ctx context.Context, user User) (*AuthenticationChallenge, error) {
 	// Get all credentials for the user
-	credentials, err := w.options.Credentials.GetCredentials(ctx, userID)
+	credentials, err := w.options.Credentials.GetCredentials(ctx, user)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "getting credentials")
 	}
@@ -34,7 +34,7 @@ func (w *webauthn) CreateAuthentication(ctx context.Context, userID string) (*Au
 	}
 
 	// Store the challenge in the challenge store
-	if err := w.options.Challenges.StoreChallenge(ctx, userID, challengeBytes); err != nil {
+	if err := w.options.Challenges.StoreChallenge(ctx, user, challengeBytes); err != nil {
 		return nil, errutil.Wrapf(err, "storing challenge")
 	}
 

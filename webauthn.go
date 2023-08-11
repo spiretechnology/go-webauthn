@@ -6,23 +6,21 @@ import (
 
 	"github.com/spiretechnology/go-webauthn/internal/challenge"
 	"github.com/spiretechnology/go-webauthn/spec"
-	"github.com/spiretechnology/go-webauthn/store"
 )
 
 type WebAuthn interface {
-	CreateRegistration(ctx context.Context, userID string) (*RegistrationChallenge, error)
-	VerifyRegistration(ctx context.Context, userID string, res *RegistrationResponse) (*RegistrationResult, error)
-	CreateAuthentication(ctx context.Context, userID string) (*AuthenticationChallenge, error)
-	VerifyAuthentication(ctx context.Context, userID string, res *AuthenticationResponse) (*AuthenticationResult, error)
+	CreateRegistration(ctx context.Context, user User) (*RegistrationChallenge, error)
+	VerifyRegistration(ctx context.Context, user User, res *RegistrationResponse) (*RegistrationResult, error)
+	CreateAuthentication(ctx context.Context, user User) (*AuthenticationChallenge, error)
+	VerifyAuthentication(ctx context.Context, user User, res *AuthenticationResponse) (*AuthenticationResult, error)
 }
 
 type Options struct {
 	RP             spec.RelyingParty
 	Codec          Codec
 	PublicKeyTypes []PublicKeyType
-	Users          store.Users
-	Credentials    store.Credentials
-	Challenges     store.Challenges
+	Credentials    Credentials
+	Challenges     Challenges
 	ChallengeFunc  func() ([32]byte, error)
 }
 
@@ -31,7 +29,7 @@ func New(options Options) WebAuthn {
 		options.Codec = base64.RawURLEncoding
 	}
 	if options.Challenges == nil {
-		options.Challenges = store.NewChallengesInMemory()
+		options.Challenges = NewChallengesInMemory()
 	}
 	if options.PublicKeyTypes == nil {
 		options.PublicKeyTypes = []PublicKeyType{

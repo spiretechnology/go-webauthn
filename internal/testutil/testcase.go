@@ -5,13 +5,12 @@ import (
 
 	"github.com/spiretechnology/go-webauthn"
 	"github.com/spiretechnology/go-webauthn/spec"
-	"github.com/spiretechnology/go-webauthn/store"
 )
 
 type TestCase struct {
 	Name               string
 	RelyingParty       spec.RelyingParty
-	User               store.User
+	User               webauthn.User
 	RegistrationJSON   string
 	AuthenticationJSON string
 }
@@ -42,9 +41,9 @@ func (tc *TestCase) AuthenticationChallenge() [32]byte {
 	return [32]byte(Decode(authResp.Challenge))
 }
 
-func (tc *TestCase) Credential() *store.Credential {
+func (tc *TestCase) Credential() *webauthn.Credential {
 	regResp := tc.RegistrationResponse()
-	return &store.Credential{
+	return &webauthn.Credential{
 		ID:           Decode(regResp.CredentialID),
 		Type:         "public-key",
 		PublicKey:    Decode(regResp.PublicKey),

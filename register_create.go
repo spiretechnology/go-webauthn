@@ -16,27 +16,11 @@ type RegistrationUser struct {
 type RegistrationChallenge struct {
 	Challenge        string                 `json:"challenge"`
 	RP               spec.RelyingParty      `json:"rp"`
-	User             RegistrationUser       `json:"user"`
+	User             User                   `json:"user"`
 	PubKeyCredParams []spec.PubKeyCredParam `json:"pubKeyCredParams"`
 }
 
-func (w *webauthn) CreateRegistration(ctx context.Context, userID string) (*RegistrationChallenge, error) {
-	// Get the user with the given ID
-	user, err := w.options.Users.GetUser(ctx, userID)
-	if err != nil {
-		return nil, errutil.Wrapf(err, "getting user")
-	}
-	if user == nil {
-		return nil, errutil.Wrap(ErrUserNotFound)
-	}
-
-	// Format the user
-	registrationUser := RegistrationUser{
-		ID:          user.ID,
-		Name:        user.Name,
-		DisplayName: user.DisplayName,
-	}
-
+func (w *webauthn) CreateRegistration(ctx context.Context, user User) (*RegistrationChallenge, error) {
 	// Generate the random challenge
 	challengeBytes, err := w.options.ChallengeFunc()
 	if err != nil {
@@ -44,14 +28,14 @@ func (w *webauthn) CreateRegistration(ctx context.Context, userID string) (*Regi
 	}
 
 	// Store the challenge in the challenge store
-	if err := w.options.Challenges.StoreChallenge(ctx, userID, challengeBytes); err != nil {
+	if err := w.options.Challenges.StoreChallenge(ctx, user, challengeBytes); err != nil {
 		return nil, errutil.Wrapf(err, "storing challenge")
 	}
 
 	return &RegistrationChallenge{
 		Challenge:        w.options.Codec.EncodeToString(challengeBytes[:]),
 		RP:               w.options.RP,
-		User:             registrationUser,
+		User:             user,
 		PubKeyCredParams: w.getPubKeyCredParams(),
 	}, nil
 }

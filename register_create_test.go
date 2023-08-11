@@ -17,41 +17,27 @@ func TestCreateRegistration(t *testing.T) {
 		tcChallenge := tc.RegistrationChallenge()
 
 		t.Run(tc.Name, func(t *testing.T) {
-			t.Run("user does not exist", func(t *testing.T) {
-				w, users, _, challenges := setupMocks(nil)
-				users.On("GetUser", ctx, tc.User.ID).Return(nil, nil).Once()
-
-				challenge, err := w.CreateRegistration(ctx, tc.User.ID)
-				require.Nil(t, challenge, "challenge should be nil")
-				require.ErrorIs(t, err, webauthn.ErrUserNotFound, "error should be ErrUserNotFound")
-
-				users.AssertExpectations(t)
-				challenges.AssertNotCalled(t, "StoreChallenge", mock.Anything, mock.Anything, mock.Anything)
-			})
-
 			t.Run("storing challenge fails", func(t *testing.T) {
-				w, users, _, challenges := setupMocks(nil)
-				users.On("GetUser", ctx, tc.User.ID).Return(&tc.User, nil).Once()
-				challenges.On("StoreChallenge", mock.Anything, tc.User.ID, mock.Anything).Return(errors.New("test error")).Once()
+				w, credentials, challenges := setupMocks(nil)
+				challenges.On("StoreChallenge", mock.Anything, tc.User, mock.Anything).Return(errors.New("test error")).Once()
 
-				challenge, err := w.CreateRegistration(ctx, tc.User.ID)
+				challenge, err := w.CreateRegistration(ctx, tc.User)
 				require.Nil(t, challenge, "challenge should be nil")
 				require.Error(t, err, "error should not be nil")
 
-				users.AssertExpectations(t)
+				credentials.AssertExpectations(t)
 				challenges.AssertExpectations(t)
 			})
 
 			t.Run("creates registration successfully", func(t *testing.T) {
-				w, users, _, challenges := setupMocks(&webauthn.Options{
+				w, credentials, challenges := setupMocks(&webauthn.Options{
 					ChallengeFunc: func() ([32]byte, error) {
 						return tcChallenge, nil
 					},
 				})
-				users.On("GetUser", ctx, tc.User.ID).Return(&tc.User, nil).Once()
-				challenges.On("StoreChallenge", mock.Anything, tc.User.ID, mock.Anything).Return(nil).Once()
+				challenges.On("StoreChallenge", mock.Anything, tc.User, mock.Anything).Return(nil).Once()
 
-				challenge, err := w.CreateRegistration(ctx, tc.User.ID)
+				challenge, err := w.CreateRegistration(ctx, tc.User)
 				require.NotNil(t, challenge, "challenge should not be nil")
 				require.Nil(t, err, "error should be nil")
 
@@ -62,7 +48,7 @@ func TestCreateRegistration(t *testing.T) {
 				require.Equal(t, tc.User.DisplayName, challenge.User.DisplayName, "user display name should match")
 				require.Equal(t, 6, len(challenge.PubKeyCredParams), "pub key cred params should match")
 
-				users.AssertExpectations(t)
+				credentials.AssertExpectations(t)
 				challenges.AssertExpectations(t)
 			})
 		})
