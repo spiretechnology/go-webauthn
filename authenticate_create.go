@@ -23,6 +23,9 @@ func (w *webauthn) CreateAuthentication(ctx context.Context, userID string) (*Au
 	if err != nil {
 		return nil, errutil.Wrapf(err, "getting credentials")
 	}
+	if len(credentials) == 0 {
+		return nil, errutil.Wrap(ErrNoCredentials)
+	}
 
 	// Generate the random challenge
 	challengeBytes, err := w.options.ChallengeFunc()
