@@ -33,3 +33,12 @@ func (o *AttestationObject) DecodeAuthData() (*AuthenticatorData, error) {
 	authData.AttCredential = o.AuthData[37:]
 	return &authData, nil
 }
+
+func (a *AuthenticatorData) Encode() []byte {
+	buf := make([]byte, 37+len(a.AttCredential))
+	copy(buf[:32], a.RPIDHash[:])
+	buf[32] = a.Flags
+	binary.BigEndian.PutUint32(buf[33:37], a.SignCount)
+	copy(buf[37:], a.AttCredential)
+	return buf
+}

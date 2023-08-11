@@ -7,6 +7,13 @@ type storedChallege struct {
 	challenge [32]byte
 }
 
+func challengeKey(userID string, challenge [32]byte) storedChallege {
+	return storedChallege{
+		userID:    userID,
+		challenge: challenge,
+	}
+}
+
 func NewChallengesInMemory() Challenges {
 	return &inMemChallenges{
 		challenges: make(map[storedChallege]struct{}),
@@ -18,16 +25,16 @@ type inMemChallenges struct {
 }
 
 func (c *inMemChallenges) StoreChallenge(ctx context.Context, userID string, challenge [32]byte) error {
-	c.challenges[storedChallege{userID: userID, challenge: challenge}] = struct{}{}
+	c.challenges[challengeKey(userID, challenge)] = struct{}{}
 	return nil
 }
 
 func (c *inMemChallenges) HasChallenge(ctx context.Context, userID string, challenge [32]byte) (bool, error) {
-	_, ok := c.challenges[storedChallege{userID: userID, challenge: challenge}]
+	_, ok := c.challenges[challengeKey(userID, challenge)]
 	return ok, nil
 }
 
 func (c *inMemChallenges) RemoveChallenge(ctx context.Context, userID string, challenge [32]byte) error {
-	delete(c.challenges, storedChallege{userID: userID, challenge: challenge})
+	delete(c.challenges, challengeKey(userID, challenge))
 	return nil
 }

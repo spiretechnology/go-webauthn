@@ -1,0 +1,9 @@
+with-expecter: true
+dir: "{{.InterfaceDir}}/mocks"
+outpkg: mocks
+packages:
+  github.com/spiretechnology/go-webauthn/store:
+    interfaces:
+      Challenges:
+      Credentials:
+      Users:

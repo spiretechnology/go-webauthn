@@ -3,7 +3,6 @@ package webauthn
 import (
 	"context"
 
-	"github.com/spiretechnology/go-webauthn/internal/challenge"
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
 	"github.com/spiretechnology/go-webauthn/spec"
 )
@@ -39,7 +38,7 @@ func (w *webauthn) CreateRegistration(ctx context.Context, userID string) (*Regi
 	}
 
 	// Generate the random challenge
-	challengeBytes, err := challenge.GenerateChallenge()
+	challengeBytes, err := w.options.ChallengeFunc()
 	if err != nil {
 		return nil, errutil.Wrapf(err, "generating challenge")
 	}
