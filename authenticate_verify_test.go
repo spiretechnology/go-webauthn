@@ -29,7 +29,7 @@ func TestVerifyAuthentication(t *testing.T) {
 
 			t.Run("verifies registration successfully", func(t *testing.T) {
 				w, credentials, challenges := setupMocks(&webauthn.Options{
-					ChallengeFunc: func() ([32]byte, error) {
+					ChallengeFunc: func() (webauthn.Challenge, error) {
 						return tcChallenge, nil
 					},
 				})
@@ -44,29 +44,6 @@ func TestVerifyAuthentication(t *testing.T) {
 				credentials.AssertExpectations(t)
 				challenges.AssertExpectations(t)
 			})
-
-			// t.Run("fails with invalid public key alg", func(t *testing.T) {
-			// 	w, users, credentials, challenges := setupMocks(&webauthn.Options{
-			// 		ChallengeFunc: func() ([32]byte, error) {
-			// 			return tcChallenge, nil
-			// 		},
-			// 	})
-			// 	challenges.On("HasChallenge", mock.Anything, tc.User, tcChallenge).Return(true, nil).Once()
-			// 	challenges.On("RemoveChallenge", mock.Anything, tc.User, tcChallenge).Return(nil).Once()
-			// 	users.On("GetUser", ctx, tc.User).Return(&tc.User, nil).Once()
-
-			// 	// Switch to an unsupported public key alg
-			// 	res := tc.AuthenticationResponse()
-			// 	res.PublicKeyAlg = 0
-
-			// 	result, err := w.VerifyAuthentication(ctx, tc.User, res)
-			// 	require.Nil(t, result, "result should be nil")
-			// 	require.Error(t, err, "error should not be nil")
-
-			// 	users.AssertExpectations(t)
-			// 	challenges.AssertExpectations(t)
-			// 	credentials.AssertExpectations(t)
-			// })
 		})
 	}
 }

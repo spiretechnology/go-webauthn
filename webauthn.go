@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/base64"
 
-	"github.com/spiretechnology/go-webauthn/internal/challenge"
 	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
@@ -21,7 +20,7 @@ type Options struct {
 	PublicKeyTypes []PublicKeyType
 	Credentials    Credentials
 	Challenges     Challenges
-	ChallengeFunc  func() ([32]byte, error)
+	ChallengeFunc  func() (Challenge, error)
 }
 
 func New(options Options) WebAuthn {
@@ -38,7 +37,7 @@ func New(options Options) WebAuthn {
 		}
 	}
 	if options.ChallengeFunc == nil {
-		options.ChallengeFunc = challenge.GenerateChallenge
+		options.ChallengeFunc = spec.GenerateChallenge
 	}
 	return &webauthn{options}
 }

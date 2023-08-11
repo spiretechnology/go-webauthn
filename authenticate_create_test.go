@@ -44,7 +44,7 @@ func TestCreateAuthentication(t *testing.T) {
 
 			t.Run("creates authentication successfully", func(t *testing.T) {
 				w, credentials, challenges := setupMocks(&webauthn.Options{
-					ChallengeFunc: func() ([32]byte, error) {
+					ChallengeFunc: func() (webauthn.Challenge, error) {
 						return tcChallenge, nil
 					},
 				})

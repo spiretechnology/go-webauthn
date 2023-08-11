@@ -31,7 +31,7 @@ func TestCreateRegistration(t *testing.T) {
 
 			t.Run("creates registration successfully", func(t *testing.T) {
 				w, credentials, challenges := setupMocks(&webauthn.Options{
-					ChallengeFunc: func() ([32]byte, error) {
+					ChallengeFunc: func() (webauthn.Challenge, error) {
 						return tcChallenge, nil
 					},
 				})

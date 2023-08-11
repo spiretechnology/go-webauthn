@@ -30,14 +30,14 @@ func (tc *TestCase) AuthenticationResponse() *webauthn.AuthenticationResponse {
 	return &res
 }
 
-func (tc *TestCase) RegistrationChallenge() [32]byte {
+func (tc *TestCase) RegistrationChallenge() webauthn.Challenge {
 	regResp := tc.RegistrationResponse()
-	return [32]byte(Decode(regResp.Challenge))
+	return webauthn.Challenge(Decode(regResp.Challenge))
 }
 
-func (tc *TestCase) AuthenticationChallenge() [32]byte {
+func (tc *TestCase) AuthenticationChallenge() webauthn.Challenge {
 	authResp := tc.AuthenticationResponse()
-	return [32]byte(Decode(authResp.Challenge))
+	return webauthn.Challenge(Decode(authResp.Challenge))
 }
 
 func (tc *TestCase) Credential() *webauthn.Credential {

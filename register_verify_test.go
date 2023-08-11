@@ -29,7 +29,7 @@ func TestVerifyRegistration(t *testing.T) {
 
 			t.Run("verifies registration successfully", func(t *testing.T) {
 				w, credentials, challenges := setupMocks(&webauthn.Options{
-					ChallengeFunc: func() ([32]byte, error) {
+					ChallengeFunc: func() (webauthn.Challenge, error) {
 						return tcChallenge, nil
 					},
 				})
@@ -47,7 +47,7 @@ func TestVerifyRegistration(t *testing.T) {
 
 			t.Run("fails with invalid public key alg", func(t *testing.T) {
 				w, credentials, challenges := setupMocks(&webauthn.Options{
-					ChallengeFunc: func() ([32]byte, error) {
+					ChallengeFunc: func() (webauthn.Challenge, error) {
 						return tcChallenge, nil
 					},
 				})

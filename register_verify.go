@@ -28,7 +28,7 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding challenge")
 	}
-	challengeBytes := [32]byte(challengeBytesSlice)
+	challengeBytes := Challenge(challengeBytesSlice)
 	ok, err := w.options.Challenges.HasChallenge(ctx, user, challengeBytes)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "checking challenge")

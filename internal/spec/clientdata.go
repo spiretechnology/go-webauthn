@@ -23,15 +23,15 @@ type ClientData struct {
 	// TokenBinding *TokenBinding `json:"tokenBinding,omitempty"`
 }
 
-func (c *ClientData) DecodeChallenge() ([32]byte, error) {
+func (c *ClientData) DecodeChallenge() (Challenge, error) {
 	challengeBytes, err := base64.RawURLEncoding.DecodeString(c.Challenge)
 	if err != nil {
-		return [32]byte{}, errutil.Wrapf(err, "decoding challenge")
+		return Challenge{}, errutil.Wrapf(err, "decoding challenge")
 	}
 	if len(challengeBytes) != 32 {
-		return [32]byte{}, errutil.Wrap(errors.New("challenge must be 32 bytes"))
+		return Challenge{}, errutil.Wrap(errors.New("challenge must be 32 bytes"))
 	}
-	var challenge [32]byte
+	var challenge Challenge
 	copy(challenge[:], challengeBytes)
 	return challenge, nil
 }
