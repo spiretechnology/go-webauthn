@@ -5,7 +5,7 @@ import (
 	"crypto/sha256"
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/spec"
+	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
 type RegistrationResponse struct {

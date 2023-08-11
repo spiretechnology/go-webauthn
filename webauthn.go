@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 
 	"github.com/spiretechnology/go-webauthn/internal/challenge"
-	"github.com/spiretechnology/go-webauthn/spec"
+	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
 type WebAuthn interface {

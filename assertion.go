@@ -2,7 +2,7 @@ package webauthn
 
 import (
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/spec"
+	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
 // AuthenticatorAssertionResponse is an authentication response.
