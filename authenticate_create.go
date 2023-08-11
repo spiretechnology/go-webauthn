@@ -6,12 +6,14 @@ import (
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
 )
 
+// AuthenticationChallenge is the challenge that is sent to the client to initiate an authentication ceremony.
 type AuthenticationChallenge struct {
 	Challenge        string              `json:"challenge"`
 	RPID             string              `json:"rpId"`
 	AllowCredentials []AllowedCredential `json:"allowCredentials"`
 }
 
+// AllowedCredential is a credential that is allowed to be used for authentication.
 type AllowedCredential struct {
 	Type string `json:"type"`
 	ID   string `json:"id"`

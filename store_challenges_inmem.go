@@ -14,6 +14,7 @@ func challengeKey(user User, challenge [32]byte) storedChallege {
 	}
 }
 
+// NewChallengesInMemory returns a new in-memory implementation of the Challenges interface.
 func NewChallengesInMemory() Challenges {
 	return &inMemChallenges{
 		challenges: make(map[storedChallege]struct{}),

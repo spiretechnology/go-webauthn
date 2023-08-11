@@ -7,12 +7,7 @@ import (
 	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
-type RegistrationUser struct {
-	ID          string `json:"id"`
-	Name        string `json:"name"`
-	DisplayName string `json:"displayName"`
-}
-
+// RegistrationChallenge is the challenge that is sent to the client to initiate a registration ceremony.
 type RegistrationChallenge struct {
 	Challenge        string                 `json:"challenge"`
 	RP               RelyingParty           `json:"rp"`

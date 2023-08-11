@@ -50,7 +50,7 @@ type webauthn struct {
 func (w *webauthn) getPubKeyCredParams() []spec.PubKeyCredParam {
 	params := make([]spec.PubKeyCredParam, len(w.options.PublicKeyTypes))
 	for i, keyType := range w.options.PublicKeyTypes {
-		params[i] = keyType.PubKeyCredParam()
+		params[i] = keyType.pubKeyCredParam()
 	}
 	return params
 }

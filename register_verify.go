@@ -8,6 +8,7 @@ import (
 	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
+// RegistrationResponse is the response sent back by the client after a registration ceremony.
 type RegistrationResponse struct {
 	Challenge    string                           `json:"challenge"`
 	CredentialID string                           `json:"credentialId"`
@@ -16,7 +17,10 @@ type RegistrationResponse struct {
 	PublicKeyAlg int                              `json:"publicKeyAlg"`
 }
 
-type RegistrationResult struct{}
+// RegistrationResult contains the results of verifying the registration respose.
+type RegistrationResult struct {
+	Credential Credential
+}
 
 func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *RegistrationResponse) (*RegistrationResult, error) {
 	// Decode the challenge from the response
@@ -127,5 +131,8 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 		return nil, errutil.Wrapf(err, "storing credential")
 	}
 
-	return &RegistrationResult{}, nil
+	// Return the credential
+	return &RegistrationResult{
+		Credential: cred,
+	}, nil
 }

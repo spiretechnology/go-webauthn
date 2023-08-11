@@ -7,13 +7,17 @@ import (
 	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
+// AuthenticationResponse is the response sent back by the client after an authentication ceremony.
 type AuthenticationResponse struct {
 	Challenge    string                         `json:"challenge"`
 	CredentialID string                         `json:"credentialId"`
 	Response     AuthenticatorAssertionResponse `json:"response"`
 }
 
-type AuthenticationResult struct{}
+// AuthenticationResult contains the results of verifying the authentication response.
+type AuthenticationResult struct {
+	Credential Credential
+}
 
 func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *AuthenticationResponse) (*AuthenticationResult, error) {
 	// Decode the challenge from the response
@@ -51,7 +55,7 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 	}
 
 	// Decode the public key from the credential store
-	publicKey, err := ParsePublicKey(credential.PublicKey)
+	publicKey, err := parsePublicKey(credential.PublicKey)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "parsing public key")
 	}
@@ -102,5 +106,7 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 		return nil, errutil.Wrap(ErrSignatureMismatch)
 	}
 
-	return &AuthenticationResult{}, nil
+	return &AuthenticationResult{
+		Credential: *credential,
+	}, nil
 }

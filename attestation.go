@@ -5,6 +5,7 @@ import (
 	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
+// AuthenticatorAttestationResponse is the internal response value send by the client in response to a registration ceremony.
 type AuthenticatorAttestationResponse struct {
 	ClientDataJSON    string `json:"clientDataJSON"`
 	AttestationObject string `json:"attestationObject"`

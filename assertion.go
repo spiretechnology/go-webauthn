@@ -5,7 +5,7 @@ import (
 	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
-// AuthenticatorAssertionResponse is an authentication response.
+// AuthenticatorAssertionResponse is the internal response value send by the client in response to an authentication ceremony.
 type AuthenticatorAssertionResponse struct {
 	AuthenticatorData string  `json:"authenticatorData"`
 	ClientDataJSON    string  `json:"clientDataJSON"`

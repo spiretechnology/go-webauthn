@@ -25,15 +25,17 @@ const (
 	PS512 = PublicKeyType(-259)
 )
 
+// PublicKeyType is a type of public key and signature algorithm.
 type PublicKeyType int
 
-func (k PublicKeyType) PubKeyCredParam() spec.PubKeyCredParam {
+func (k PublicKeyType) pubKeyCredParam() spec.PubKeyCredParam {
 	return spec.PubKeyCredParam{
 		Type: "public-key",
 		Alg:  int(k),
 	}
 }
 
+// Hash returns the hash function used by this public key type.
 func (k PublicKeyType) Hash() crypto.Hash {
 	switch k {
 	case -7, -257:
@@ -47,6 +49,7 @@ func (k PublicKeyType) Hash() crypto.Hash {
 	}
 }
 
+// CheckKey checks that the given public key is valid for this public key type.
 func (k PublicKeyType) CheckKey(key crypto.PublicKey) error {
 	switch k {
 	case -7, -35, -36:
@@ -61,8 +64,8 @@ func (k PublicKeyType) CheckKey(key crypto.PublicKey) error {
 	return errutil.Wrap(ErrInvalidKeyForAlg)
 }
 
-// ParsePublicKey parses a DER-encoded public key.
-func ParsePublicKey(publicKeyBytes []byte) (crypto.PublicKey, error) {
+// parsePublicKey parses a DER-encoded public key.
+func parsePublicKey(publicKeyBytes []byte) (crypto.PublicKey, error) {
 	// Parse the public key
 	ifc, err := x509.ParsePKIXPublicKey(publicKeyBytes)
 	if err != nil {
