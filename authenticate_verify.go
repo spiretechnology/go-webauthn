@@ -25,6 +25,9 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding challenge")
 	}
+	if len(challengeBytesSlice) != spec.ChallengeSize {
+		return nil, errutil.Wrap(ErrInvalidChallenge)
+	}
 	challengeBytes := Challenge(challengeBytesSlice)
 	ok, err := w.options.Challenges.HasChallenge(ctx, user, challengeBytes)
 	if err != nil {

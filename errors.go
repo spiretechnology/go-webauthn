@@ -12,4 +12,5 @@ var (
 	ErrCredentialNotFound    = errors.New("credential not found")
 	ErrNoCredentials         = errors.New("user has no credential")
 	ErrUnrecognizedChallenge = errors.New("unrecognized challenge")
+	ErrInvalidChallenge      = errors.New("invalid challenge size")
 )
