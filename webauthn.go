@@ -16,7 +16,7 @@ type WebAuthn interface {
 }
 
 type Options struct {
-	RP             spec.RelyingParty
+	RP             RelyingParty
 	Codec          Codec
 	PublicKeyTypes []PublicKeyType
 	Credentials    Credentials

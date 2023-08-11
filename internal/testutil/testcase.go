@@ -4,12 +4,11 @@ import (
 	"encoding/json"
 
 	"github.com/spiretechnology/go-webauthn"
-	"github.com/spiretechnology/go-webauthn/spec"
 )
 
 type TestCase struct {
 	Name               string
-	RelyingParty       spec.RelyingParty
+	RelyingParty       webauthn.RelyingParty
 	User               webauthn.User
 	RegistrationJSON   string
 	AuthenticationJSON string

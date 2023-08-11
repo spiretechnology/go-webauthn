@@ -4,11 +4,10 @@ import (
 	"github.com/spiretechnology/go-webauthn"
 	"github.com/spiretechnology/go-webauthn/internal/mocks"
 	"github.com/spiretechnology/go-webauthn/internal/testutil"
-	"github.com/spiretechnology/go-webauthn/spec"
 )
 
 var (
-	testRP = spec.RelyingParty{
+	testRP = webauthn.RelyingParty{
 		ID:   "localhost",
 		Name: "Test",
 	}

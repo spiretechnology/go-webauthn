@@ -15,7 +15,7 @@ type RegistrationUser struct {
 
 type RegistrationChallenge struct {
 	Challenge        string                 `json:"challenge"`
-	RP               spec.RelyingParty      `json:"rp"`
+	RP               RelyingParty           `json:"rp"`
 	User             User                   `json:"user"`
 	PubKeyCredParams []spec.PubKeyCredParam `json:"pubKeyCredParams"`
 }
