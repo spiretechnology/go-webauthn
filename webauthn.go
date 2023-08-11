@@ -17,13 +17,13 @@ type WebAuthn interface {
 }
 
 type Options struct {
-	RP            spec.RelyingParty
-	Codec         Codec
-	KeyTypes      []PublicKeyType
-	Users         store.Users
-	Credentials   store.Credentials
-	Challenges    store.Challenges
-	ChallengeFunc func() ([32]byte, error)
+	RP             spec.RelyingParty
+	Codec          Codec
+	PublicKeyTypes []PublicKeyType
+	Users          store.Users
+	Credentials    store.Credentials
+	Challenges     store.Challenges
+	ChallengeFunc  func() ([32]byte, error)
 }
 
 func New(options Options) WebAuthn {
@@ -33,8 +33,8 @@ func New(options Options) WebAuthn {
 	if options.Challenges == nil {
 		options.Challenges = store.NewChallengesInMemory()
 	}
-	if options.KeyTypes == nil {
-		options.KeyTypes = []PublicKeyType{
+	if options.PublicKeyTypes == nil {
+		options.PublicKeyTypes = []PublicKeyType{
 			ES256, ES384, ES512,
 			PS256, PS384, PS512,
 		}
@@ -50,15 +50,15 @@ type webauthn struct {
 }
 
 func (w *webauthn) getPubKeyCredParams() []spec.PubKeyCredParam {
-	params := make([]spec.PubKeyCredParam, len(w.options.KeyTypes))
-	for i, keyType := range w.options.KeyTypes {
+	params := make([]spec.PubKeyCredParam, len(w.options.PublicKeyTypes))
+	for i, keyType := range w.options.PublicKeyTypes {
 		params[i] = keyType.PubKeyCredParam()
 	}
 	return params
 }
 
 func (w *webauthn) supportsPublicKeyAlg(alg PublicKeyType) bool {
-	for _, keyType := range w.options.KeyTypes {
+	for _, keyType := range w.options.PublicKeyTypes {
 		if keyType == alg {
 			return true
 		}

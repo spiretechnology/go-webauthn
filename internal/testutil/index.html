@@ -19,20 +19,12 @@
                 crypto.getRandomValues(data);
                 return data;
             }
-        </script>
-    </head>
-    <body>
-        <button id="register">Register</button> <br />
-        <button id="authenticate">Authenticate</button>
-        <script>
-            var credID = 0;
-            // var challenge = new Uint8Array([
-            //     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
-            //     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F,
-            // ]);
-            document.getElementById("register").onclick = function() {
+
+            let credID = 0;
+
+            async function register() {
                 const challenge = generateChallenge();
-                navigator.credentials.create({
+                const cred = await navigator.credentials.create({
                     publicKey: {
                         rp: { id: 'localhost', name: 'Test' },
                         user: {
@@ -40,58 +32,62 @@
                             name: 'test',
                             displayName: 'Test'
                         },
-                        authenticatorSelection: {
-                            authenticatorAttachment: 'platform',
-                            // userVerification: 'preferred',
-                            requireResidentKey: true,
-                        },
+                        // authenticatorSelection: {
+                        //     authenticatorAttachment: 'platform',
+                        //     // userVerification: 'preferred',
+                        //     requireResidentKey: true,
+                        // },
+                        // authenticatorSelection: {
+                        //     // authenticatorAttachment: 'cross-platform',
+                        //     // userVerification: 'preferred',
+                        //     // requireResidentKey: false,
+                        // },
                         pubKeyCredParams: [
                             { type: 'public-key', alg: -7 },
                             { type: 'public-key', alg: -257},
                         ],
                         challenge: challenge,
                     },
-                }).then(function(cred) {
-                    credID = cred.rawId;
-                    console.log(JSON.stringify({
-                        challenge: encode(challenge),
-                        credentialId: encode(cred.rawId),
-                        response: {
-                            clientDataJSON: encode(cred.response.clientDataJSON),
-                            attestationObject: encode(cred.response.attestationObject),
-                        },
-                        publicKey: encode(cred.response.getPublicKey()),
-                        publicKeyAlg: cred.response.getPublicKeyAlgorithm(),
-                    }));
-                }).catch(function(err) {
-                    console.log(err);
                 });
-            };
-            document.getElementById("authenticate").onclick = function() {
+                credID = cred.rawId;
+                console.log(JSON.stringify({
+                    challenge: encode(challenge),
+                    credentialId: encode(cred.rawId),
+                    response: {
+                        clientDataJSON: encode(cred.response.clientDataJSON),
+                        attestationObject: encode(cred.response.attestationObject),
+                    },
+                    publicKey: encode(cred.response.getPublicKey()),
+                    publicKeyAlg: cred.response.getPublicKeyAlgorithm(),
+                }));
+            }
+
+            async function authenticate() {
                 const challenge = generateChallenge();
-                navigator.credentials.get({
+                const cred = await navigator.credentials.get({
                     publicKey: {
                         challenge: challenge,
                         rpId: 'localhost',
                         allowCredentials: [{ type: 'public-key', id: credID }]
                     },
-                }).then(function(cred) {
-                    console.log(JSON.stringify({
-                        challenge: encode(challenge),
-                        credentialId: encode(cred.rawId),
-                        response: {
-                            authenticatorData: encode(cred.response.authenticatorData),
-                            clientDataJSON: encode(cred.response.clientDataJSON),
-                            signature: encode(cred.response.signature),
-                            userHandle: cred.response.userHandle
-                                ? encode(cred.response.userHandle)
-                                : null,
-                        },
-                    }))
-                }).catch(function(err) {
-                    console.log(err);
                 });
-            };
+                console.log(JSON.stringify({
+                    challenge: encode(challenge),
+                    credentialId: encode(cred.rawId),
+                    response: {
+                        authenticatorData: encode(cred.response.authenticatorData),
+                        clientDataJSON: encode(cred.response.clientDataJSON),
+                        signature: encode(cred.response.signature),
+                        userHandle: cred.response.userHandle
+                            ? encode(cred.response.userHandle)
+                            : null,
+                    },
+                }));
+            }
         </script>
+    </head>
+    <body>
+        <button onclick="register()">Register</button> <br />
+        <button onclick="authenticate()">Authenticate</button>
     </body>
 </html>
