@@ -13,13 +13,21 @@ import (
 
 // AuthenticatorAssertionResponse is an authentication response.
 type AuthenticatorAssertionResponse struct {
-	AuthenticatorData []byte
-	ClientDataJSON    []byte
-	Signature         []byte
-	UserHandle        []byte
+	AuthData       []byte
+	ClientDataJSON []byte
+	Signature      []byte
+	UserHandle     []byte
 }
 
-func (a *AuthenticatorAssertionResponse) DecodeClientData() (*ClientData, error) {
+func (a *AuthenticatorAssertionResponse) AuthenticatorData() (*AuthenticatorData, error) {
+	authData := &AuthenticatorData{}
+	if err := authData.Decode(a.AuthData); err != nil {
+		return nil, errutil.Wrapf(err, "decoding authenticator data")
+	}
+	return authData, nil
+}
+
+func (a *AuthenticatorAssertionResponse) ClientData() (*ClientData, error) {
 	var clientData ClientData
 	if err := json.Unmarshal(a.ClientDataJSON, &clientData); err != nil {
 		return nil, errutil.Wrapf(err, "decoding json")
@@ -33,8 +41,8 @@ func (a *AuthenticatorAssertionResponse) VerifySignature(publicKey crypto.Public
 	clientDataHash := sha256.Sum256(a.ClientDataJSON)
 
 	// Calculate the combined hash for everything
-	hashInput := make([]byte, 0, len(a.AuthenticatorData)+len(clientDataHash))
-	hashInput = append(hashInput, a.AuthenticatorData...)
+	hashInput := make([]byte, 0, len(a.AuthData)+len(clientDataHash))
+	hashInput = append(hashInput, a.AuthData...)
 	hashInput = append(hashInput, clientDataHash[:]...)
 
 	// Calculate the hash using the provided hash function

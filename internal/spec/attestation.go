@@ -9,11 +9,11 @@ import (
 
 // AuthenticatorAttestationResponse is a registration response.
 type AuthenticatorAttestationResponse struct {
-	ClientDataJSON    []byte
-	AttestationObject []byte
+	ClientDataJSON        []byte
+	AttestationObjectCBOR []byte
 }
 
-func (a *AuthenticatorAttestationResponse) DecodeClientData() (*ClientData, error) {
+func (a *AuthenticatorAttestationResponse) ClientData() (*ClientData, error) {
 	var clientData ClientData
 	if err := json.Unmarshal(a.ClientDataJSON, &clientData); err != nil {
 		return nil, errutil.Wrapf(err, "decoding json")
@@ -21,9 +21,9 @@ func (a *AuthenticatorAttestationResponse) DecodeClientData() (*ClientData, erro
 	return &clientData, nil
 }
 
-func (a *AuthenticatorAttestationResponse) DecodeAttestationObject() (*AttestationObject, error) {
+func (a *AuthenticatorAttestationResponse) AttestationObject() (*AttestationObject, error) {
 	var attestationObject AttestationObject
-	if err := cbor.Unmarshal(a.AttestationObject, &attestationObject); err != nil {
+	if err := cbor.Unmarshal(a.AttestationObjectCBOR, &attestationObject); err != nil {
 		return nil, errutil.Wrapf(err, "decoding cbor")
 	}
 	return &attestationObject, nil

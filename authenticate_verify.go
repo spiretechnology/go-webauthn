@@ -74,7 +74,7 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 	//================================================================================
 
 	// Decode the clientDataJSON
-	clientData, err := assertionResponse.DecodeClientData()
+	clientData, err := assertionResponse.ClientData()
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding client data")
 	}

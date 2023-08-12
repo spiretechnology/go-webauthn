@@ -26,7 +26,7 @@ func (a *AuthenticatorAttestationResponse) Decode(codec Codec) (*spec.Authentica
 
 	// Wrap it in the spec type
 	return &spec.AuthenticatorAttestationResponse{
-		ClientDataJSON:    clientDataJSONBytes,
-		AttestationObject: attestationObjectBytes,
+		ClientDataJSON:        clientDataJSONBytes,
+		AttestationObjectCBOR: attestationObjectBytes,
 	}, nil
 }

@@ -13,12 +13,12 @@ import (
 
 func TestCreateAuthentication(t *testing.T) {
 	ctx := context.Background()
-	for _, tc := range testCases {
+	for _, tc := range testutil.TestCases {
 		tcChallenge := tc.AuthenticationChallenge()
 
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Run("user has no credentials", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(nil)
+				w, credentials, challenges := setupMocks(tc, nil)
 				credentials.On("GetCredentials", ctx, tc.User).Return([]webauthn.Credential{}, nil).Once()
 
 				challenge, err := w.CreateAuthentication(ctx, tc.User)
@@ -30,7 +30,7 @@ func TestCreateAuthentication(t *testing.T) {
 			})
 
 			t.Run("storing challenge fails", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(nil)
+				w, credentials, challenges := setupMocks(tc, nil)
 				credentials.On("GetCredentials", ctx, tc.User).Return([]webauthn.Credential{*tc.Credential()}, nil).Once()
 				challenges.On("StoreChallenge", mock.Anything, tc.User, mock.Anything).Return(errors.New("test error")).Once()
 
@@ -43,7 +43,7 @@ func TestCreateAuthentication(t *testing.T) {
 			})
 
 			t.Run("creates authentication successfully", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(&webauthn.Options{
+				w, credentials, challenges := setupMocks(tc, &webauthn.Options{
 					ChallengeFunc: func() (webauthn.Challenge, error) {
 						return tcChallenge, nil
 					},
@@ -56,7 +56,7 @@ func TestCreateAuthentication(t *testing.T) {
 				require.Nil(t, err, "error should be nil")
 
 				require.Equal(t, testutil.Encode(tcChallenge[:]), challenge.Challenge, "challenge should match")
-				require.Equal(t, testRP.ID, challenge.RPID, "relying party should match")
+				require.Equal(t, tc.RelyingParty.ID, challenge.RPID, "relying party should match")
 				require.Equal(t, 1, len(challenge.AllowCredentials), "allow credentials should match")
 
 				credentials.AssertExpectations(t)
