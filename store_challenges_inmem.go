@@ -2,6 +2,7 @@ package webauthn
 
 import (
 	"context"
+	"sync"
 
 	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 )
@@ -27,19 +28,26 @@ func NewChallengesInMemory() Challenges {
 
 type inMemChallenges struct {
 	challenges map[storedChallege]struct{}
+	mut        sync.RWMutex
 }
 
 func (c *inMemChallenges) StoreChallenge(ctx context.Context, user User, challenge challenge.Challenge) error {
+	c.mut.Lock()
+	defer c.mut.Unlock()
 	c.challenges[challengeKey(user, challenge)] = struct{}{}
 	return nil
 }
 
 func (c *inMemChallenges) HasChallenge(ctx context.Context, user User, challenge challenge.Challenge) (bool, error) {
+	c.mut.RLock()
+	defer c.mut.RUnlock()
 	_, ok := c.challenges[challengeKey(user, challenge)]
 	return ok, nil
 }
 
 func (c *inMemChallenges) RemoveChallenge(ctx context.Context, user User, challenge challenge.Challenge) error {
+	c.mut.Lock()
+	defer c.mut.Unlock()
 	delete(c.challenges, challengeKey(user, challenge))
 	return nil
 }
