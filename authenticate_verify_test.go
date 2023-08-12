@@ -5,21 +5,22 @@ import (
 	"testing"
 
 	"github.com/spiretechnology/go-webauthn"
+	"github.com/spiretechnology/go-webauthn/internal/testutil"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
 func TestVerifyAuthentication(t *testing.T) {
 	ctx := context.Background()
-	for _, tc := range testCases {
+	for _, tc := range testutil.TestCases {
 		tcChallenge := tc.AuthenticationChallenge()
 
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Run("challenge doesn't exist", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(nil)
+				w, credentials, challenges := setupMocks(tc, nil)
 				challenges.On("HasChallenge", mock.Anything, tc.User, tcChallenge).Return(false, nil).Once()
 
-				result, err := w.VerifyAuthentication(ctx, tc.User, tc.AuthenticationResponse())
+				result, err := w.VerifyAuthentication(ctx, tc.User, &tc.Authentication)
 				require.Nil(t, result, "result should be nil")
 				require.ErrorIs(t, err, webauthn.ErrUnrecognizedChallenge, "error should be errTest")
 
@@ -28,7 +29,7 @@ func TestVerifyAuthentication(t *testing.T) {
 			})
 
 			t.Run("verifies registration successfully", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(&webauthn.Options{
+				w, credentials, challenges := setupMocks(tc, &webauthn.Options{
 					ChallengeFunc: func() (webauthn.Challenge, error) {
 						return tcChallenge, nil
 					},
@@ -37,7 +38,7 @@ func TestVerifyAuthentication(t *testing.T) {
 				challenges.On("RemoveChallenge", mock.Anything, tc.User, tcChallenge).Return(nil).Once()
 				credentials.On("GetCredential", mock.Anything, tc.User, mock.Anything).Return(tc.Credential(), nil).Once()
 
-				result, err := w.VerifyAuthentication(ctx, tc.User, tc.AuthenticationResponse())
+				result, err := w.VerifyAuthentication(ctx, tc.User, &tc.Authentication)
 				require.Nil(t, err, "error should be nil")
 				require.NotNil(t, result, "result should not be nil")
 

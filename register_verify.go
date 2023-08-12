@@ -67,7 +67,7 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 	//================================================================================
 
 	// Decode the clientDataJSON
-	clientData, err := attestationResponse.DecodeClientData()
+	clientData, err := attestationResponse.ClientData()
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding client data")
 	}
@@ -91,13 +91,13 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 	//================================================================================
 
 	// Decode the attestationObject
-	attestationObject, err := attestationResponse.DecodeAttestationObject()
+	attestationObject, err := attestationResponse.AttestationObject()
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding attestation object")
 	}
 
 	// Decode the the auth data within the attestation
-	authData, err := attestationObject.DecodeAuthData()
+	authData, err := attestationObject.AuthenticatorData()
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding auth data")
 	}

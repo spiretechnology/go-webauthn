@@ -43,9 +43,9 @@ func (a *AuthenticatorAssertionResponse) Decode(codec Codec) (*spec.Authenticato
 
 	// Wrap it in the spec type
 	return &spec.AuthenticatorAssertionResponse{
-		AuthenticatorData: authenticatorDataBytes,
-		ClientDataJSON:    clientDataJSONBytes,
-		Signature:         signatureBytes,
-		UserHandle:        userHandleBytes,
+		AuthData:       authenticatorDataBytes,
+		ClientDataJSON: clientDataJSONBytes,
+		Signature:      signatureBytes,
+		UserHandle:     userHandleBytes,
 	}, nil
 }

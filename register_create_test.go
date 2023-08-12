@@ -13,12 +13,12 @@ import (
 
 func TestCreateRegistration(t *testing.T) {
 	ctx := context.Background()
-	for _, tc := range testCases {
+	for _, tc := range testutil.TestCases {
 		tcChallenge := tc.RegistrationChallenge()
 
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Run("storing challenge fails", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(nil)
+				w, credentials, challenges := setupMocks(tc, nil)
 				challenges.On("StoreChallenge", mock.Anything, tc.User, mock.Anything).Return(errors.New("test error")).Once()
 
 				challenge, err := w.CreateRegistration(ctx, tc.User)
@@ -30,7 +30,7 @@ func TestCreateRegistration(t *testing.T) {
 			})
 
 			t.Run("creates registration successfully", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(&webauthn.Options{
+				w, credentials, challenges := setupMocks(tc, &webauthn.Options{
 					ChallengeFunc: func() (webauthn.Challenge, error) {
 						return tcChallenge, nil
 					},
@@ -42,7 +42,7 @@ func TestCreateRegistration(t *testing.T) {
 				require.Nil(t, err, "error should be nil")
 
 				require.Equal(t, testutil.Encode(tcChallenge[:]), challenge.Challenge, "challenge should match")
-				require.Equal(t, testRP, challenge.RP, "relying party should match")
+				require.Equal(t, tc.RelyingParty, challenge.RP, "relying party should match")
 				require.Equal(t, tc.User.ID, challenge.User.ID, "user id should match")
 				require.Equal(t, tc.User.Name, challenge.User.Name, "user name should match")
 				require.Equal(t, tc.User.DisplayName, challenge.User.DisplayName, "user display name should match")

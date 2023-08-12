@@ -1,51 +1,65 @@
 package testutil
 
 import (
-	"encoding/json"
-
 	"github.com/spiretechnology/go-webauthn"
+	"github.com/spiretechnology/go-webauthn/internal/spec"
 )
 
 type TestCase struct {
-	Name               string
-	RelyingParty       webauthn.RelyingParty
-	User               webauthn.User
-	RegistrationJSON   string
-	AuthenticationJSON string
+	Name           string                          `json:"name"`
+	RelyingParty   webauthn.RelyingParty           `json:"relyingParty"`
+	User           webauthn.User                   `json:"user"`
+	Registration   webauthn.RegistrationResponse   `json:"registration"`
+	Authentication webauthn.AuthenticationResponse `json:"authentication"`
+	Attestation    TestCase_Attestation            `json:"attestation"`
+	Assertion      TestCase_Assertion              `json:"assertion"`
 }
 
-func (tc *TestCase) RegistrationResponse() *webauthn.RegistrationResponse {
-	var res webauthn.RegistrationResponse
-	if err := json.Unmarshal([]byte(tc.RegistrationJSON), &res); err != nil {
-		panic(err)
-	}
-	return &res
+type TestCase_Attestation struct {
+	Fmt              string   `json:"fmt"`
+	Flags            []string `json:"flags"`
+	SignCount        uint32   `json:"signCount"`
+	AAGUIDHex        string   `json:"aaguidHex"`
+	CredIDHex        string   `json:"credIdHex"`
+	CredPublicKeyB64 string   `json:"credPublicKeyB64"`
 }
 
-func (tc *TestCase) AuthenticationResponse() *webauthn.AuthenticationResponse {
-	var res webauthn.AuthenticationResponse
-	if err := json.Unmarshal([]byte(tc.AuthenticationJSON), &res); err != nil {
-		panic(err)
-	}
-	return &res
+type TestCase_Assertion struct {
+	Flags     []string `json:"flags"`
+	SignCount uint32   `json:"signCount"`
 }
 
 func (tc *TestCase) RegistrationChallenge() webauthn.Challenge {
-	regResp := tc.RegistrationResponse()
-	return webauthn.Challenge(Decode(regResp.Challenge))
+	return webauthn.Challenge(Decode(tc.Registration.Challenge))
 }
 
 func (tc *TestCase) AuthenticationChallenge() webauthn.Challenge {
-	authResp := tc.AuthenticationResponse()
-	return webauthn.Challenge(Decode(authResp.Challenge))
+	return webauthn.Challenge(Decode(tc.Authentication.Challenge))
 }
 
 func (tc *TestCase) Credential() *webauthn.Credential {
-	regResp := tc.RegistrationResponse()
 	return &webauthn.Credential{
-		ID:           Decode(regResp.CredentialID),
+		ID:           Decode(tc.Registration.CredentialID),
 		Type:         "public-key",
-		PublicKey:    Decode(regResp.PublicKey),
-		PublicKeyAlg: regResp.PublicKeyAlg,
+		PublicKey:    Decode(tc.Registration.PublicKey),
+		PublicKeyAlg: tc.Registration.PublicKeyAlg,
 	}
+}
+
+func ParseFlags(flagsStrs []string) uint8 {
+	flagsMap := map[string]uint8{
+		"UserPresent":            spec.AuthDataFlag_UserPresent,
+		"RFU1":                   spec.AuthDataFlag_RFU1,
+		"UserVerified":           spec.AuthDataFlag_UserVerified,
+		"RFU2":                   spec.AuthDataFlag_RFU2,
+		"RFU3":                   spec.AuthDataFlag_RFU3,
+		"RFU4":                   spec.AuthDataFlag_RFU4,
+		"AttestedCredentialData": spec.AuthDataFlag_AttestedCredentialData,
+		"ExtensionData":          spec.AuthDataFlag_ExtensionData,
+	}
+	var flags uint8
+	for _, flag := range flagsStrs {
+		flags |= flagsMap[flag]
+	}
+	return flags
 }

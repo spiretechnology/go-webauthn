@@ -1,7 +1,6 @@
 package spec
 
 import (
-	"crypto/sha256"
 	"encoding/binary"
 	"errors"
 
@@ -15,57 +14,69 @@ type AttestationObject struct {
 	AttStmt  map[string]any `cbor:"attStmt"`
 }
 
-// AuthenticatorData represents the authenticator data structure.
-type AuthenticatorData struct {
-	RPIDHash      [sha256.Size]byte
-	Flags         byte
-	SignCount     uint32
-	AttCredential []byte // This will need further parsing
-}
-
-func (o *AttestationObject) DecodeAuthData() (*AuthenticatorData, error) {
-	if len(o.AuthData) < sha256.Size+5 {
-		return nil, errutil.Wrap(errors.New("invalid authenticator data length"))
+func (o *AttestationObject) AuthenticatorData() (*AuthenticatorData, error) {
+	authData := &AuthenticatorData{}
+	if err := authData.Decode(o.AuthData); err != nil {
+		return nil, errutil.Wrapf(err, "decoding authenticator data")
 	}
-	var authData AuthenticatorData
-	var cursor int
-
-	// RPID hash
-	copy(authData.RPIDHash[:], o.AuthData[cursor:sha256.Size])
-	cursor += sha256.Size
-
-	// Flags
-	authData.Flags = o.AuthData[cursor]
-	cursor++
-
-	// Sign count
-	authData.SignCount = binary.BigEndian.Uint32(o.AuthData[cursor : cursor+4])
-	cursor += 4
-
-	// Att Credential
-	authData.AttCredential = o.AuthData[cursor:]
-
-	return &authData, nil
+	return authData, nil
 }
 
-func (a *AuthenticatorData) Encode() []byte {
-	buf := make([]byte, sha256.Size+5+len(a.AttCredential))
+type AttestedCredential struct {
+	AAGUID        [16]byte
+	CredID        []byte
+	CredPublicKey []byte
+}
+
+// func (c *AttestedCredential) Encode() []byte {
+// 	buf := make([]byte, 16+2+len(c.CredID)+len(c.CredPublicKey))
+// 	var cursor int
+
+// 	// AAGUID
+// 	copy(buf[:16], c.AAGUID[:])
+// 	cursor += 16
+
+// 	// Cred ID length
+// 	binary.BigEndian.PutUint16(buf[cursor:cursor+2], uint16(len(c.CredID)))
+// 	cursor += 2
+
+// 	// Cred ID
+// 	copy(buf[cursor:], c.CredID)
+// 	cursor += len(c.CredID)
+
+// 	// Cred public key
+// 	copy(buf[cursor:], c.CredPublicKey)
+
+// 	return buf
+// }
+
+func (c *AttestedCredential) Decode(buf []byte) error {
+	if len(buf) < 18 {
+		return errutil.Wrap(errors.New("invalid attested credential length"))
+	}
+
 	var cursor int
 
-	// RPID hash
-	copy(buf[:sha256.Size], a.RPIDHash[:])
-	cursor += sha256.Size
+	// AAGUID
+	copy(c.AAGUID[:], buf[cursor:cursor+16])
+	cursor += 16
 
-	// Flags
-	buf[cursor] = a.Flags
-	cursor++
+	// Cred ID length
+	credIDLen := binary.BigEndian.Uint16(buf[cursor : cursor+2])
+	cursor += 2
 
-	// Sign count
-	binary.BigEndian.PutUint32(buf[cursor:cursor+4], a.SignCount)
-	cursor += 4
+	if len(buf) < 18+int(credIDLen) {
+		return errutil.Wrap(errors.New("invalid attested credential length"))
+	}
 
-	// Att Credential
-	copy(buf[cursor:], a.AttCredential)
+	// Cred ID
+	c.CredID = make([]byte, credIDLen)
+	copy(c.CredID, buf[cursor:cursor+int(credIDLen)])
+	cursor += int(credIDLen)
 
-	return buf
+	// Cred public key
+	c.CredPublicKey = make([]byte, len(buf)-cursor)
+	copy(c.CredPublicKey, buf[cursor:])
+
+	return nil
 }
