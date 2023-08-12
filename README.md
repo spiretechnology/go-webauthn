@@ -74,7 +74,7 @@ var response webauthn.RegistrationResponse
 
 // Verify the registration response
 user := webauthn.User{ /* same user as before */ }
-result, err := wa.VerifyRegistration(ctx, challenge, response)
+result, err := wa.VerifyRegistration(ctx, user, response)
 ```
 
 ## Authentication Example
@@ -103,7 +103,7 @@ var response webauthn.AuthenticationResponse
 
 // Verify the authentication response
 user := webauthn.User{ /* same user as before */ }
-result, err := wa.AuthenticationRegistration(ctx, challenge, response)
+result, err := wa.AuthenticationRegistration(ctx, user, response)
 ```
 
 ## Client-side processing
