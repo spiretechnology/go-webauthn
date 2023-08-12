@@ -4,10 +4,10 @@ import (
 	"context"
 	"encoding/base64"
 
-	"github.com/spiretechnology/go-webauthn/internal/spec"
 	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 	"github.com/spiretechnology/go-webauthn/pkg/codec"
 	"github.com/spiretechnology/go-webauthn/pkg/pubkey"
+	"github.com/spiretechnology/go-webauthn/pkg/spec"
 )
 
 type WebAuthn interface {

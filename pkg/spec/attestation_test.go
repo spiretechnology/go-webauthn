@@ -5,8 +5,8 @@ import (
 	"encoding/hex"
 	"testing"
 
-	"github.com/spiretechnology/go-webauthn/internal/spec"
 	"github.com/spiretechnology/go-webauthn/internal/testutil"
+	"github.com/spiretechnology/go-webauthn/pkg/spec"
 	"github.com/stretchr/testify/require"
 )
 

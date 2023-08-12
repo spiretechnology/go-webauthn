@@ -2,8 +2,8 @@ package webauthn
 
 import (
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/internal/spec"
 	"github.com/spiretechnology/go-webauthn/pkg/codec"
+	"github.com/spiretechnology/go-webauthn/pkg/spec"
 )
 
 // AuthenticatorAssertionResponse is the internal response value send by the client in response to an authentication ceremony.

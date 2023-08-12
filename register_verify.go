@@ -5,10 +5,10 @@ import (
 	"crypto/sha256"
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/internal/spec"
 	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 	"github.com/spiretechnology/go-webauthn/pkg/errs"
 	"github.com/spiretechnology/go-webauthn/pkg/pubkey"
+	"github.com/spiretechnology/go-webauthn/pkg/spec"
 )
 
 // RegistrationResponse is the response sent back by the client after a registration ceremony.

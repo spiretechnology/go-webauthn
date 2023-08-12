@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/internal/spec"
 	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 	"github.com/spiretechnology/go-webauthn/pkg/errs"
 	"github.com/spiretechnology/go-webauthn/pkg/pubkey"
+	"github.com/spiretechnology/go-webauthn/pkg/spec"
 )
 
 // AuthenticationResponse is the response sent back by the client after an authentication ceremony.

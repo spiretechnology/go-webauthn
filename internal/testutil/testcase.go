@@ -2,8 +2,8 @@ package testutil
 
 import (
 	"github.com/spiretechnology/go-webauthn"
-	"github.com/spiretechnology/go-webauthn/internal/spec"
 	"github.com/spiretechnology/go-webauthn/pkg/challenge"
+	"github.com/spiretechnology/go-webauthn/pkg/spec"
 )
 
 type TestCase struct {

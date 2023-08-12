@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/internal/spec"
+	"github.com/spiretechnology/go-webauthn/pkg/spec"
 )
 
 // RegistrationChallenge is the challenge that is sent to the client to initiate a registration ceremony.
