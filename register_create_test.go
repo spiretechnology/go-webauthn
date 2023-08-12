@@ -29,12 +29,13 @@ func TestCreateRegistration(t *testing.T) {
 
 			t.Run("creates registration successfully", func(t *testing.T) {
 				w, credentials, tokener := setupMocks(tc, tc.RegistrationChallenge)
-				tokener.On("CreateToken", tcChallenge, tc.User).Return("token", nil).Once()
+				tokener.On("CreateToken", tcChallenge, tc.User).Return(tc.Registration.Token, nil).Once()
 
 				challenge, err := w.CreateRegistration(ctx, tc.User)
 				require.NotNil(t, challenge, "challenge should not be nil")
 				require.Nil(t, err, "error should be nil")
 
+				require.Equal(t, tc.Registration.Token, challenge.Token, "token should match")
 				require.Equal(t, testutil.Encode(tcChallenge[:]), challenge.Challenge, "challenge should match")
 				require.Equal(t, tc.RelyingParty, challenge.RP, "relying party should match")
 				require.Equal(t, tc.User.ID, challenge.User.ID, "user id should match")

@@ -29,7 +29,7 @@ func TestVerifyAuthentication(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Run("challenge token is invalid", func(t *testing.T) {
 				w, credentials, tokener := setupMocks(tc, tc.AuthenticationChallenge)
-				tokener.On("VerifyToken", mock.Anything, tcChallenge, tc.User).Return(errors.New("invalid token")).Once()
+				tokener.On("VerifyToken", tc.Authentication.Token, tcChallenge, tc.User).Return(errors.New("invalid token")).Once()
 
 				result, err := w.VerifyAuthentication(ctx, tc.User, &tc.Authentication)
 				require.Nil(t, result, "result should be nil")
@@ -45,12 +45,13 @@ func TestVerifyAuthentication(t *testing.T) {
 				// Seed the store with a valid credential
 				credential := seedMockWithCredential(t, tc, w, credentials, tokener)
 
-				tokener.On("VerifyToken", mock.Anything, tcChallenge, tc.User).Return(nil).Once()
+				tokener.On("VerifyToken", tc.Authentication.Token, tcChallenge, tc.User).Return(nil).Once()
 				credentials.On("GetCredential", mock.Anything, tc.User, mock.Anything).Return(&credential, nil).Once()
 
 				result, err := w.VerifyAuthentication(ctx, tc.User, &tc.Authentication)
 				require.Nil(t, err, "error should be nil")
 				require.NotNil(t, result, "result should not be nil")
+				require.Equal(t, credential, result.Credential, "credential should match")
 
 				credentials.AssertExpectations(t)
 				tokener.AssertExpectations(t)

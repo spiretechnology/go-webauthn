@@ -47,12 +47,13 @@ func TestCreateAuthentication(t *testing.T) {
 			t.Run("creates authentication successfully", func(t *testing.T) {
 				w, credentials, tokener := setupMocks(tc, tc.AuthenticationChallenge)
 				credentials.On("GetCredentials", ctx, tc.User).Return([]webauthn.Credential{testCred}, nil).Once()
-				tokener.On("CreateToken", tcChallenge, tc.User).Return("token", nil).Once()
+				tokener.On("CreateToken", tcChallenge, tc.User).Return(tc.Authentication.Token, nil).Once()
 
 				challenge, err := w.CreateAuthentication(ctx, tc.User)
 				require.NotNil(t, challenge, "challenge should not be nil")
 				require.Nil(t, err, "error should be nil")
 
+				require.Equal(t, tc.Authentication.Token, challenge.Token, "token should match")
 				require.Equal(t, testutil.Encode(tcChallenge[:]), challenge.Challenge, "challenge should match")
 				require.Equal(t, tc.RelyingParty.ID, challenge.RPID, "relying party should match")
 				require.Equal(t, 1, len(challenge.AllowCredentials), "allow credentials should match")

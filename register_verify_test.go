@@ -18,7 +18,7 @@ func TestVerifyRegistration(t *testing.T) {
 		t.Run(tc.Name, func(t *testing.T) {
 			t.Run("challenge token is invalid", func(t *testing.T) {
 				w, credentials, tokener := setupMocks(tc, tc.RegistrationChallenge)
-				tokener.On("VerifyToken", mock.Anything, tcChallenge, tc.User).Return(errors.New("invalid token")).Once()
+				tokener.On("VerifyToken", tc.Registration.Token, tcChallenge, tc.User).Return(errors.New("invalid token")).Once()
 
 				result, err := w.VerifyRegistration(ctx, tc.User, &tc.Registration)
 				require.Nil(t, result, "result should be nil")
@@ -30,7 +30,7 @@ func TestVerifyRegistration(t *testing.T) {
 
 			t.Run("verifies registration successfully", func(t *testing.T) {
 				w, credentials, tokener := setupMocks(tc, tc.RegistrationChallenge)
-				tokener.On("VerifyToken", mock.Anything, tcChallenge, tc.User).Return(nil).Once()
+				tokener.On("VerifyToken", tc.Registration.Token, tcChallenge, tc.User).Return(nil).Once()
 				credentials.On("StoreCredential", mock.Anything, tc.User, mock.Anything, mock.Anything).Return(nil).Once()
 
 				result, err := w.VerifyRegistration(ctx, tc.User, &tc.Registration)
@@ -40,23 +40,6 @@ func TestVerifyRegistration(t *testing.T) {
 				credentials.AssertExpectations(t)
 				tokener.AssertExpectations(t)
 			})
-
-			// t.Run("fails with invalid public key alg", func(t *testing.T) {
-			// 	w, credentials, challenges := setupMocks(tc, tc.RegistrationChallenge)
-			// 	challenges.On("HasChallenge", mock.Anything, tc.User, tcChallenge).Return(true, nil).Once()
-			// 	challenges.On("RemoveChallenge", mock.Anything, tc.User, tcChallenge).Return(nil).Once()
-
-			// 	// Switch to an unsupported public key alg
-			// 	res := &tc.Registration
-			// 	res.PublicKeyAlg = 0
-
-			// 	result, err := w.VerifyRegistration(ctx, tc.User, res)
-			// 	require.Nil(t, result, "result should be nil")
-			// 	require.Error(t, err, "error should not be nil")
-
-			// 	credentials.AssertExpectations(t)
-			// 	challenges.AssertExpectations(t)
-			// })
 		})
 	}
 }
