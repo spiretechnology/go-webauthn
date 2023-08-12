@@ -7,6 +7,8 @@ import (
 
 	"github.com/spiretechnology/go-webauthn"
 	"github.com/spiretechnology/go-webauthn/internal/testutil"
+	"github.com/spiretechnology/go-webauthn/pkg/challenge"
+	"github.com/spiretechnology/go-webauthn/pkg/errs"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -23,7 +25,7 @@ func TestCreateAuthentication(t *testing.T) {
 
 				challenge, err := w.CreateAuthentication(ctx, tc.User)
 				require.Nil(t, challenge, "challenge should be nil")
-				require.ErrorIs(t, err, webauthn.ErrNoCredentials, "error should be ErrNoCredentials")
+				require.ErrorIs(t, err, errs.ErrNoCredentials, "error should be ErrNoCredentials")
 
 				credentials.AssertExpectations(t)
 				challenges.AssertExpectations(t)
@@ -44,7 +46,7 @@ func TestCreateAuthentication(t *testing.T) {
 
 			t.Run("creates authentication successfully", func(t *testing.T) {
 				w, credentials, challenges := setupMocks(tc, &webauthn.Options{
-					ChallengeFunc: func() (webauthn.Challenge, error) {
+					ChallengeFunc: func() (challenge.Challenge, error) {
 						return tcChallenge, nil
 					},
 				})

@@ -5,6 +5,9 @@ import (
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
 	"github.com/spiretechnology/go-webauthn/internal/spec"
+	"github.com/spiretechnology/go-webauthn/pkg/challenge"
+	"github.com/spiretechnology/go-webauthn/pkg/errs"
+	"github.com/spiretechnology/go-webauthn/pkg/pubkey"
 )
 
 // AuthenticationResponse is the response sent back by the client after an authentication ceremony.
@@ -25,16 +28,16 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding challenge")
 	}
-	if len(challengeBytesSlice) != spec.ChallengeSize {
-		return nil, errutil.Wrap(ErrInvalidChallenge)
+	if len(challengeBytesSlice) != challenge.ChallengeSize {
+		return nil, errutil.Wrap(errs.ErrInvalidChallenge)
 	}
-	challengeBytes := Challenge(challengeBytesSlice)
+	challengeBytes := challenge.Challenge(challengeBytesSlice)
 	ok, err := w.options.Challenges.HasChallenge(ctx, user, challengeBytes)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "checking challenge")
 	}
 	if !ok {
-		return nil, errutil.Wrap(ErrUnrecognizedChallenge)
+		return nil, errutil.Wrap(errs.ErrUnrecognizedChallenge)
 	}
 
 	// Remove the challenge from the store. It's no longer needed.
@@ -54,11 +57,11 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 		return nil, errutil.Wrapf(err, "getting credential")
 	}
 	if credential == nil {
-		return nil, errutil.Wrap(ErrCredentialNotFound)
+		return nil, errutil.Wrap(errs.ErrCredentialNotFound)
 	}
 
 	// Decode the public key from the credential store
-	publicKey, err := parsePublicKey(credential.PublicKey)
+	publicKey, err := pubkey.Parse(credential.PublicKey)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "parsing public key")
 	}
@@ -98,7 +101,7 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 	//================================================================================
 
 	// Get the public key alg type from the credential
-	publicKeyAlg := PublicKeyType(credential.PublicKeyAlg)
+	publicKeyAlg := pubkey.KeyType(credential.PublicKeyAlg)
 
 	// Verify the signature using the signature algorithm for the stored credential
 	verified, err := assertionResponse.VerifySignature(publicKey, publicKeyAlg.Hash())
@@ -106,7 +109,7 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 		return nil, errutil.Wrapf(err, "verifying signature")
 	}
 	if !verified {
-		return nil, errutil.Wrap(ErrSignatureMismatch)
+		return nil, errutil.Wrap(errs.ErrSignatureMismatch)
 	}
 
 	return &AuthenticationResult{

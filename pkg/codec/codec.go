@@ -1,4 +1,4 @@
-package webauthn
+package codec
 
 // Codec defines an interface for encoding and decoding binary data to and from a string.
 type Codec interface {

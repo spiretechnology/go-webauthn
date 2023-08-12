@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
+	"github.com/spiretechnology/go-webauthn/pkg/errs"
 )
 
 // AuthenticationChallenge is the challenge that is sent to the client to initiate an authentication ceremony.
@@ -26,7 +27,7 @@ func (w *webauthn) CreateAuthentication(ctx context.Context, user User) (*Authen
 		return nil, errutil.Wrapf(err, "getting credentials")
 	}
 	if len(credentials) == 0 {
-		return nil, errutil.Wrap(ErrNoCredentials)
+		return nil, errutil.Wrap(errs.ErrNoCredentials)
 	}
 
 	// Generate the random challenge

@@ -6,6 +6,9 @@ import (
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
 	"github.com/spiretechnology/go-webauthn/internal/spec"
+	"github.com/spiretechnology/go-webauthn/pkg/challenge"
+	"github.com/spiretechnology/go-webauthn/pkg/errs"
+	"github.com/spiretechnology/go-webauthn/pkg/pubkey"
 )
 
 // RegistrationResponse is the response sent back by the client after a registration ceremony.
@@ -28,16 +31,16 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding challenge")
 	}
-	if len(challengeBytesSlice) != spec.ChallengeSize {
-		return nil, errutil.Wrap(ErrInvalidChallenge)
+	if len(challengeBytesSlice) != challenge.ChallengeSize {
+		return nil, errutil.Wrap(errs.ErrInvalidChallenge)
 	}
-	challengeBytes := Challenge(challengeBytesSlice)
+	challengeBytes := challenge.Challenge(challengeBytesSlice)
 	ok, err := w.options.Challenges.HasChallenge(ctx, user, challengeBytes)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "checking challenge")
 	}
 	if !ok {
-		return nil, errutil.Wrap(ErrUnrecognizedChallenge)
+		return nil, errutil.Wrap(errs.ErrUnrecognizedChallenge)
 	}
 
 	// Remove the challenge from the store. It's no longer needed.
@@ -46,8 +49,8 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 	}
 
 	// Check if the public key alg is supported
-	if !w.supportsPublicKeyAlg(PublicKeyType(res.PublicKeyAlg)) {
-		return nil, errutil.Wrap(ErrUnsupportedPublicKey)
+	if !w.supportsPublicKeyAlg(pubkey.KeyType(res.PublicKeyAlg)) {
+		return nil, errutil.Wrap(errs.ErrUnsupportedPublicKey)
 	}
 
 	// Decode the public key into a byte slice

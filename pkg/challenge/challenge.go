@@ -1,4 +1,4 @@
-package spec
+package challenge
 
 import (
 	"crypto/rand"

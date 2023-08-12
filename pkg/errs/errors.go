@@ -1,4 +1,4 @@
-package webauthn
+package errs
 
 import (
 	"errors"

@@ -6,6 +6,7 @@ import (
 
 	"github.com/spiretechnology/go-webauthn/internal/spec"
 	"github.com/spiretechnology/go-webauthn/internal/testutil"
+	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 	"github.com/stretchr/testify/require"
 )
 
@@ -29,7 +30,7 @@ func TestAssertion(t *testing.T) {
 
 				rawChallenge, err := clientData.DecodeChallenge()
 				require.NoError(t, err, "decode challenge should not error")
-				require.Equal(t, spec.Challenge(testutil.Decode(tc.Authentication.Challenge)), rawChallenge, "challenge should match")
+				require.Equal(t, challenge.Challenge(testutil.Decode(tc.Authentication.Challenge)), rawChallenge, "challenge should match")
 
 				authData, err := res.AuthenticatorData()
 				require.NoError(t, err, "decode auth data should not error")

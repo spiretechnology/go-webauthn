@@ -1,5 +1,7 @@
 package webauthn
 
+import "github.com/spiretechnology/go-webauthn/pkg/authenticators"
+
 // Credential represents a registered credential.
 type Credential struct {
 	// ID is the `rawId` of the credential, as defined in the WebAuthn spec.
@@ -11,4 +13,6 @@ type Credential struct {
 	// PublicKeyAlg is the `publicKeyAlg` of the credential, as defined in the WebAuthn spec.
 	// See `PublicKeyType` for supported values.
 	PublicKeyAlg int
+	// Authenticator is the model of the authenticator used to create this credential. May be nil.
+	Authenticator *authenticators.Authenticator
 }

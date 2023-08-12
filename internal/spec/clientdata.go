@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
+	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 )
 
 const (
@@ -23,15 +24,15 @@ type ClientData struct {
 	// TokenBinding *TokenBinding `json:"tokenBinding,omitempty"`
 }
 
-func (c *ClientData) DecodeChallenge() (Challenge, error) {
+func (c *ClientData) DecodeChallenge() (challenge.Challenge, error) {
 	challengeBytes, err := base64.RawURLEncoding.DecodeString(c.Challenge)
 	if err != nil {
-		return Challenge{}, errutil.Wrapf(err, "decoding challenge")
+		return challenge.Challenge{}, errutil.Wrapf(err, "decoding challenge")
 	}
 	if len(challengeBytes) != 32 {
-		return Challenge{}, errutil.Wrap(errors.New("challenge must be 32 bytes"))
+		return challenge.Challenge{}, errutil.Wrap(errors.New("challenge must be 32 bytes"))
 	}
-	var challenge Challenge
-	copy(challenge[:], challengeBytes)
-	return challenge, nil
+	var chal challenge.Challenge
+	copy(chal[:], challengeBytes)
+	return chal, nil
 }

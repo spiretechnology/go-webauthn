@@ -1,4 +1,4 @@
-package webauthn
+package pubkey
 
 import (
 	"crypto"
@@ -7,36 +7,29 @@ import (
 	"crypto/x509"
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/internal/spec"
+	"github.com/spiretechnology/go-webauthn/pkg/errs"
 )
 
 const (
 	// ECDSA with SHA-256 signature hash
-	ES256 = PublicKeyType(-7)
+	ES256 = KeyType(-7)
 	// ECDSA with SHA-384 signature hash
-	ES384 = PublicKeyType(-35)
+	ES384 = KeyType(-35)
 	// ECDSA with SHA-512 signature hash
-	ES512 = PublicKeyType(-36)
+	ES512 = KeyType(-36)
 	// RSA-PSS with SHA-256 signature hash
-	PS256 = PublicKeyType(-257)
+	PS256 = KeyType(-257)
 	// RSA-PSS with SHA-384 signature hash
-	PS384 = PublicKeyType(-258)
+	PS384 = KeyType(-258)
 	// RSA-PSS with SHA-512 signature hash
-	PS512 = PublicKeyType(-259)
+	PS512 = KeyType(-259)
 )
 
-// PublicKeyType is a type of public key and signature algorithm.
-type PublicKeyType int
-
-func (k PublicKeyType) pubKeyCredParam() spec.PubKeyCredParam {
-	return spec.PubKeyCredParam{
-		Type: "public-key",
-		Alg:  int(k),
-	}
-}
+// KeyType is a type of public key and signature algorithm.
+type KeyType int
 
 // Hash returns the hash function used by this public key type.
-func (k PublicKeyType) Hash() crypto.Hash {
+func (k KeyType) Hash() crypto.Hash {
 	switch k {
 	case -7, -257:
 		return crypto.SHA256
@@ -50,7 +43,7 @@ func (k PublicKeyType) Hash() crypto.Hash {
 }
 
 // CheckKey checks that the given public key is valid for this public key type.
-func (k PublicKeyType) CheckKey(key crypto.PublicKey) error {
+func (k KeyType) CheckKey(key crypto.PublicKey) error {
 	switch k {
 	case -7, -35, -36:
 		if _, ok := key.(*ecdsa.PublicKey); ok {
@@ -61,11 +54,11 @@ func (k PublicKeyType) CheckKey(key crypto.PublicKey) error {
 			return nil
 		}
 	}
-	return errutil.Wrap(ErrInvalidKeyForAlg)
+	return errutil.Wrap(errs.ErrInvalidKeyForAlg)
 }
 
-// parsePublicKey parses a DER-encoded public key.
-func parsePublicKey(publicKeyBytes []byte) (crypto.PublicKey, error) {
+// Parse parses a DER-encoded public key.
+func Parse(publicKeyBytes []byte) (crypto.PublicKey, error) {
 	// Parse the public key
 	ifc, err := x509.ParsePKIXPublicKey(publicKeyBytes)
 	if err != nil {
@@ -79,6 +72,6 @@ func parsePublicKey(publicKeyBytes []byte) (crypto.PublicKey, error) {
 	case *rsa.PublicKey:
 		return key, nil
 	default:
-		return nil, errutil.Wrap(ErrUnsupportedPublicKey)
+		return nil, errutil.Wrap(errs.ErrUnsupportedPublicKey)
 	}
 }

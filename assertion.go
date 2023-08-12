@@ -3,6 +3,7 @@ package webauthn
 import (
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
 	"github.com/spiretechnology/go-webauthn/internal/spec"
+	"github.com/spiretechnology/go-webauthn/pkg/codec"
 )
 
 // AuthenticatorAssertionResponse is the internal response value send by the client in response to an authentication ceremony.
@@ -13,21 +14,21 @@ type AuthenticatorAssertionResponse struct {
 	UserHandle        *string `json:"userHandle"`
 }
 
-func (a *AuthenticatorAssertionResponse) Decode(codec Codec) (*spec.AuthenticatorAssertionResponse, error) {
+func (a *AuthenticatorAssertionResponse) Decode(c codec.Codec) (*spec.AuthenticatorAssertionResponse, error) {
 	// Decode the clientDataJSON
-	clientDataJSONBytes, err := codec.DecodeString(a.ClientDataJSON)
+	clientDataJSONBytes, err := c.DecodeString(a.ClientDataJSON)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding clientDataJSON")
 	}
 
 	// Decode the authenticator data
-	authenticatorDataBytes, err := codec.DecodeString(a.AuthenticatorData)
+	authenticatorDataBytes, err := c.DecodeString(a.AuthenticatorData)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding authenticator data")
 	}
 
 	// Decode the signature string
-	signatureBytes, err := codec.DecodeString(a.Signature)
+	signatureBytes, err := c.DecodeString(a.Signature)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "decoding signature")
 	}
@@ -35,7 +36,7 @@ func (a *AuthenticatorAssertionResponse) Decode(codec Codec) (*spec.Authenticato
 	// Decode the user handle
 	var userHandleBytes []byte
 	if a.UserHandle != nil {
-		userHandleBytes, err = codec.DecodeString(*a.UserHandle)
+		userHandleBytes, err = c.DecodeString(*a.UserHandle)
 		if err != nil {
 			return nil, errutil.Wrapf(err, "decoding user handle")
 		}

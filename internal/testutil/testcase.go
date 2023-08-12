@@ -3,6 +3,7 @@ package testutil
 import (
 	"github.com/spiretechnology/go-webauthn"
 	"github.com/spiretechnology/go-webauthn/internal/spec"
+	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 )
 
 type TestCase struct {
@@ -29,12 +30,12 @@ type TestCase_Assertion struct {
 	SignCount uint32   `json:"signCount"`
 }
 
-func (tc *TestCase) RegistrationChallenge() webauthn.Challenge {
-	return webauthn.Challenge(Decode(tc.Registration.Challenge))
+func (tc *TestCase) RegistrationChallenge() challenge.Challenge {
+	return challenge.Challenge(Decode(tc.Registration.Challenge))
 }
 
-func (tc *TestCase) AuthenticationChallenge() webauthn.Challenge {
-	return webauthn.Challenge(Decode(tc.Authentication.Challenge))
+func (tc *TestCase) AuthenticationChallenge() challenge.Challenge {
+	return challenge.Challenge(Decode(tc.Authentication.Challenge))
 }
 
 func (tc *TestCase) Credential() *webauthn.Credential {

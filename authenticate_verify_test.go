@@ -6,6 +6,8 @@ import (
 
 	"github.com/spiretechnology/go-webauthn"
 	"github.com/spiretechnology/go-webauthn/internal/testutil"
+	"github.com/spiretechnology/go-webauthn/pkg/challenge"
+	"github.com/spiretechnology/go-webauthn/pkg/errs"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -22,7 +24,7 @@ func TestVerifyAuthentication(t *testing.T) {
 
 				result, err := w.VerifyAuthentication(ctx, tc.User, &tc.Authentication)
 				require.Nil(t, result, "result should be nil")
-				require.ErrorIs(t, err, webauthn.ErrUnrecognizedChallenge, "error should be errTest")
+				require.ErrorIs(t, err, errs.ErrUnrecognizedChallenge, "error should be errTest")
 
 				credentials.AssertExpectations(t)
 				challenges.AssertExpectations(t)
@@ -30,7 +32,7 @@ func TestVerifyAuthentication(t *testing.T) {
 
 			t.Run("verifies registration successfully", func(t *testing.T) {
 				w, credentials, challenges := setupMocks(tc, &webauthn.Options{
-					ChallengeFunc: func() (webauthn.Challenge, error) {
+					ChallengeFunc: func() (challenge.Challenge, error) {
 						return tcChallenge, nil
 					},
 				})

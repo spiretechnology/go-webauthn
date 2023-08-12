@@ -5,6 +5,9 @@ import (
 	"encoding/base64"
 
 	"github.com/spiretechnology/go-webauthn/internal/spec"
+	"github.com/spiretechnology/go-webauthn/pkg/challenge"
+	"github.com/spiretechnology/go-webauthn/pkg/codec"
+	"github.com/spiretechnology/go-webauthn/pkg/pubkey"
 )
 
 type WebAuthn interface {
@@ -16,11 +19,11 @@ type WebAuthn interface {
 
 type Options struct {
 	RP             RelyingParty
-	Codec          Codec
-	PublicKeyTypes []PublicKeyType
+	Codec          codec.Codec
+	PublicKeyTypes []pubkey.KeyType
 	Credentials    Credentials
 	Challenges     Challenges
-	ChallengeFunc  func() (Challenge, error)
+	ChallengeFunc  func() (challenge.Challenge, error)
 }
 
 func New(options Options) WebAuthn {
@@ -31,13 +34,13 @@ func New(options Options) WebAuthn {
 		options.Challenges = NewChallengesInMemory()
 	}
 	if options.PublicKeyTypes == nil {
-		options.PublicKeyTypes = []PublicKeyType{
-			ES256, ES384, ES512,
-			PS256, PS384, PS512,
+		options.PublicKeyTypes = []pubkey.KeyType{
+			pubkey.ES256, pubkey.ES384, pubkey.ES512,
+			pubkey.PS256, pubkey.PS384, pubkey.PS512,
 		}
 	}
 	if options.ChallengeFunc == nil {
-		options.ChallengeFunc = spec.GenerateChallenge
+		options.ChallengeFunc = challenge.GenerateChallenge
 	}
 	return &webauthn{options}
 }
@@ -49,12 +52,15 @@ type webauthn struct {
 func (w *webauthn) getPubKeyCredParams() []spec.PubKeyCredParam {
 	params := make([]spec.PubKeyCredParam, len(w.options.PublicKeyTypes))
 	for i, keyType := range w.options.PublicKeyTypes {
-		params[i] = keyType.pubKeyCredParam()
+		params[i] = spec.PubKeyCredParam{
+			Type: "public-key",
+			Alg:  int(keyType),
+		}
 	}
 	return params
 }
 
-func (w *webauthn) supportsPublicKeyAlg(alg PublicKeyType) bool {
+func (w *webauthn) supportsPublicKeyAlg(alg pubkey.KeyType) bool {
 	for _, keyType := range w.options.PublicKeyTypes {
 		if keyType == alg {
 			return true

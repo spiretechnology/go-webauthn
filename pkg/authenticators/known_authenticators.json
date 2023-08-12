@@ -1,0 +1,158 @@
+[
+    {
+        "aaguid": "cb69481e-8ff7-4039-93ec-0a2729a154a8",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5 (USB-A, No NFC)",
+        "name": "YubiKey 5"
+    },
+    {
+        "aaguid": "ee882879-721c-4913-9775-3dfcce97072a",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5 (USB-A, No NFC)",
+        "name": "YubiKey 5"
+    },
+    {
+        "aaguid": "fa2b99dc-9e39-4257-8f92-4a30d23c4118",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5 NFC",
+        "name": "YubiKey 5 NFC"
+    },
+    {
+        "aaguid": "2fc0579f-8113-47ea-b116-bb5a8db9202a",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5 NFC",
+        "name": "YubiKey 5 NFC"
+    },
+    {
+        "aaguid": "c1f9a0bc-1dd2-404a-b27f-8e29047a43fd",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5 NFC FIPS",
+        "name": "YubiKey 5 NFC"
+    },
+    {
+        "aaguid": "cb69481e-8ff7-4039-93ec-0a2729a154a8",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5 Nano",
+        "name": "YubiKey 5 Nano"
+    },
+    {
+        "aaguid": "ee882879-721c-4913-9775-3dfcce97072a",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5 Nano",
+        "name": "YubiKey 5 Nano"
+    },
+    {
+        "aaguid": "73bb0cd4-e502-49b8-9c6f-b59445bf720b",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5 Nano FIPS",
+        "name": "YubiKey 5 Nano"
+    },
+    {
+        "aaguid": "cb69481e-8ff7-4039-93ec-0a2729a154a8",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5C",
+        "name": "YubiKey 5C"
+    },
+    {
+        "aaguid": "ee882879-721c-4913-9775-3dfcce97072a",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5C",
+        "name": "YubiKey 5C"
+    },
+    {
+        "aaguid": "73bb0cd4-e502-49b8-9c6f-b59445bf720b",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5C FIPS",
+        "name": "YubiKey 5C"
+    },
+    {
+        "aaguid": "cb69481e-8ff7-4039-93ec-0a2729a154a8",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5C Nano",
+        "name": "YubiKey 5C Nano"
+    },
+    {
+        "aaguid": "ee882879-721c-4913-9775-3dfcce97072a",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5C Nano",
+        "name": "YubiKey 5C Nano"
+    },
+    {
+        "aaguid": "73bb0cd4-e502-49b8-9c6f-b59445bf720b",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5C Nano FIPS",
+        "name": "YubiKey 5C Nano"
+    },
+    {
+        "aaguid": "2fc0579f-8113-47ea-b116-bb5a8db9202a",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5C NFC",
+        "name": "YubiKey 5C NFC"
+    },
+    {
+        "aaguid": "c1f9a0bc-1dd2-404a-b27f-8e29047a43fd",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5C NFC FIPS",
+        "name": "YubiKey 5C NFC"
+    },
+    {
+        "aaguid": "c5ef55ff-ad9a-4b9f-b580-adebafe026d0",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5Ci",
+        "name": "YubiKey 5Ci"
+    },
+    {
+        "aaguid": "85203421-48f9-4355-9bc8-8a53846e5083",
+        "manufacturer": "Yubico",
+        "model": "YubiKey 5Ci FIPS",
+        "name": "YubiKey 5Ci"
+    },
+    {
+        "aaguid": "f8a011f3-8c0a-4d15-8006-17111f9edc7d",
+        "manufacturer": "Yubico",
+        "model": "Security Key By Yubico",
+        "name": "YubiKey"
+    },
+    {
+        "aaguid": "b92c3f9a-c014-4056-887f-140a2501163b",
+        "manufacturer": "Yubico",
+        "model": "Security Key By Yubico",
+        "name": "YubiKey"
+    },
+    {
+        "aaguid": "6d44ba9b-f6ec-2e49-b930-0c8fe920cb73",
+        "manufacturer": "Yubico",
+        "model": "Security Key NFC",
+        "name": "YubiKey NFC"
+    },
+    {
+        "aaguid": "149a2021-8ef6-4133-96b8-81f8d5b7f1f5",
+        "manufacturer": "Yubico",
+        "model": "Security Key NFC (USB-A, USB-C)",
+        "name": "Yubico Security Key NFC"
+    },
+    {
+        "aaguid": "d8522d9f-575b-4866-88a9-ba99fa02f35b",
+        "manufacturer": "Yubico",
+        "model": "YubiKey Bio Series",
+        "name": "YubiKey Bio"
+    },
+    {
+        "aaguid": "a4e9fc6d-4cbe-4758-b8ba-37598bb5bbaa",
+        "manufacturer": "Yubico",
+        "model": "Security Key NFC Black (USB-A, USB-C)",
+        "name": "YubiKey NFC Black"
+    },
+    {
+        "aaguid": "0bb43545-fd2c-4185-87dd-feb0b2916ace",
+        "manufacturer": "Yubico",
+        "model": "Security Key NFC - Enterprise Edition (USB-A, USB-C)",
+        "name": "YubiKey NFC Enterprise"
+    },
+    {
+        "aaguid": "adce0002-35bc-c60a-648b-0b25f1f05503",
+        "manufacturer": "Google",
+        "model": "Google Chrome Passkey",
+        "name": "Google Chrome Passkey"
+    }
+]

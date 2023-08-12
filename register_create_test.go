@@ -7,6 +7,7 @@ import (
 
 	"github.com/spiretechnology/go-webauthn"
 	"github.com/spiretechnology/go-webauthn/internal/testutil"
+	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -31,7 +32,7 @@ func TestCreateRegistration(t *testing.T) {
 
 			t.Run("creates registration successfully", func(t *testing.T) {
 				w, credentials, challenges := setupMocks(tc, &webauthn.Options{
-					ChallengeFunc: func() (webauthn.Challenge, error) {
+					ChallengeFunc: func() (challenge.Challenge, error) {
 						return tcChallenge, nil
 					},
 				})
