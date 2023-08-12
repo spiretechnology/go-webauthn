@@ -15,6 +15,7 @@ import (
 
 // RegistrationResponse is the response sent back by the client after a registration ceremony.
 type RegistrationResponse struct {
+	Token        string                           `json:"token"`
 	Challenge    string                           `json:"challenge"`
 	CredentialID string                           `json:"credentialId"`
 	Response     AuthenticatorAttestationResponse `json:"response"`
@@ -35,17 +36,10 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 		return nil, errutil.Wrap(errs.ErrInvalidChallenge)
 	}
 	challengeBytes := challenge.Challenge(challengeBytesSlice)
-	ok, err := w.options.Challenges.HasChallenge(ctx, user, challengeBytes)
-	if err != nil {
-		return nil, errutil.Wrapf(err, "checking challenge")
-	}
-	if !ok {
-		return nil, errutil.Wrap(errs.ErrUnrecognizedChallenge)
-	}
 
-	// Remove the challenge from the store. It's no longer needed.
-	if err := w.options.Challenges.RemoveChallenge(ctx, user, challengeBytes); err != nil {
-		return nil, errutil.Wrapf(err, "removing challenge")
+	// Verify the challenge token
+	if err := w.options.Tokener.VerifyToken(res.Token, challengeBytes, user); err != nil {
+		return nil, errutil.Wrapf(err, "verifying token")
 	}
 
 	// Decode the attestation response to spec types

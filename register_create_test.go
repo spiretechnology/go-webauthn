@@ -5,10 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/spiretechnology/go-webauthn"
 	"github.com/spiretechnology/go-webauthn/internal/testutil"
-	"github.com/spiretechnology/go-webauthn/pkg/challenge"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -18,30 +15,27 @@ func TestCreateRegistration(t *testing.T) {
 		tcChallenge := tc.RegistrationChallenge()
 
 		t.Run(tc.Name, func(t *testing.T) {
-			t.Run("storing challenge fails", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(tc, nil)
-				challenges.On("StoreChallenge", mock.Anything, tc.User, mock.Anything).Return(errors.New("test error")).Once()
+			t.Run("creating challenge token fails", func(t *testing.T) {
+				w, credentials, tokener := setupMocks(tc, tc.RegistrationChallenge)
+				tokener.On("CreateToken", tcChallenge, tc.User).Return("", errors.New("test error")).Once()
 
 				challenge, err := w.CreateRegistration(ctx, tc.User)
 				require.Nil(t, challenge, "challenge should be nil")
 				require.Error(t, err, "error should not be nil")
 
 				credentials.AssertExpectations(t)
-				challenges.AssertExpectations(t)
+				tokener.AssertExpectations(t)
 			})
 
 			t.Run("creates registration successfully", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(tc, &webauthn.Options{
-					ChallengeFunc: func() (challenge.Challenge, error) {
-						return tcChallenge, nil
-					},
-				})
-				challenges.On("StoreChallenge", mock.Anything, tc.User, mock.Anything).Return(nil).Once()
+				w, credentials, tokener := setupMocks(tc, tc.RegistrationChallenge)
+				tokener.On("CreateToken", tcChallenge, tc.User).Return(tc.Registration.Token, nil).Once()
 
 				challenge, err := w.CreateRegistration(ctx, tc.User)
 				require.NotNil(t, challenge, "challenge should not be nil")
 				require.Nil(t, err, "error should be nil")
 
+				require.Equal(t, tc.Registration.Token, challenge.Token, "token should match")
 				require.Equal(t, testutil.Encode(tcChallenge[:]), challenge.Challenge, "challenge should match")
 				require.Equal(t, tc.RelyingParty, challenge.RP, "relying party should match")
 				require.Equal(t, tc.User.ID, challenge.User.ID, "user id should match")
@@ -50,7 +44,7 @@ func TestCreateRegistration(t *testing.T) {
 				require.Equal(t, 9, len(challenge.PubKeyCredParams), "pub key cred params should match")
 
 				credentials.AssertExpectations(t)
-				challenges.AssertExpectations(t)
+				tokener.AssertExpectations(t)
 			})
 		})
 	}

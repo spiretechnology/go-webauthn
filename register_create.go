@@ -9,6 +9,7 @@ import (
 
 // RegistrationChallenge is the challenge that is sent to the client to initiate a registration ceremony.
 type RegistrationChallenge struct {
+	Token            string                 `json:"token"`
 	Challenge        string                 `json:"challenge"`
 	RP               RelyingParty           `json:"rp"`
 	User             User                   `json:"user"`
@@ -22,9 +23,10 @@ func (w *webauthn) CreateRegistration(ctx context.Context, user User) (*Registra
 		return nil, errutil.Wrapf(err, "generating challenge")
 	}
 
-	// Store the challenge in the challenge store
-	if err := w.options.Challenges.StoreChallenge(ctx, user, challengeBytes); err != nil {
-		return nil, errutil.Wrapf(err, "storing challenge")
+	// Create the token for the challenge
+	token, err := w.options.Tokener.CreateToken(challengeBytes, user)
+	if err != nil {
+		return nil, errutil.Wrapf(err, "creating token")
 	}
 
 	// Format the public key credential params for the client
@@ -37,6 +39,7 @@ func (w *webauthn) CreateRegistration(ctx context.Context, user User) (*Registra
 	}
 
 	return &RegistrationChallenge{
+		Token:            token,
 		Challenge:        w.options.Codec.EncodeToString(challengeBytes[:]),
 		RP:               w.options.RP,
 		User:             user,
