@@ -5,7 +5,6 @@ import (
 	"crypto/x509"
 	"encoding/asn1"
 	"encoding/json"
-	"log"
 
 	"github.com/fxamacker/cbor/v2"
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
@@ -105,7 +104,6 @@ func (a *AuthenticatorAttestationResponse) verifyPackedAttestation(attestationOb
 		if err != nil {
 			return errutil.Wrapf(err, "decoding certificate")
 		}
-		log.Println("Certificate found")
 		publicKey, ok := cert.PublicKey.(crypto.PublicKey)
 		if !ok {
 			return errutil.New("invalid public key")

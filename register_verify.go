@@ -24,6 +24,7 @@ type RegistrationResponse struct {
 // RegistrationResult contains the results of verifying the registration respose.
 type RegistrationResult struct {
 	Credential Credential
+	Meta       CredentialMeta
 }
 
 func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *RegistrationResponse) (*RegistrationResult, error) {
@@ -145,5 +146,6 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 	// Return the credential
 	return &RegistrationResult{
 		Credential: cred,
+		Meta:       meta,
 	}, nil
 }

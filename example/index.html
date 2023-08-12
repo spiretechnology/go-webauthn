@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="https://github.com/spiretechnology/js-webauthn/releases/download/v1.1.5/js-webauthn-browser.js"></script>
+        <script type="text/javascript">
+            const client = new webauthn.WebAuthnClient();
+
+            async function register() {
+                // Request a challenge from the server
+                const challenge = await fetch('/api/register-challenge').then(r => r.json());
+
+                // Register a device with the WebAuthn client
+                const response = await client.register(challenge);
+
+                // Send the response to the server
+                const result = await fetch('/api/register-response', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(response)
+                }).then(r => r.json())
+                appendLog(result);
+            }
+
+            async function authenticate() {
+                // Request a challenge from the server
+                const challenge = await fetch('/api/authenticate-challenge').then(r => r.json());
+
+                // Authenticate with the WebAuthn client
+                const response = await client.authenticate(challenge);
+
+                // Send the response to the server
+                const result = await fetch('/api/authenticate-response', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(response)
+                }).then(r => r.json())
+                appendLog(result);
+            }
+            function appendLog(result) {
+                document.getElementById('logs').prepend((() => {
+                    const log = document.createElement('div');
+                    log.innerText = JSON.stringify(result, null, 2);
+                    return log;
+                })());
+                console.log(result);
+            }
+        </script>
+        <style type="text/css">
+            #logs {
+                width: 90vw;
+                height: 400px;
+                border: 2px solid black;
+                overflow: auto;
+                white-space: pre;
+                font-family: 'Courier New', Courier, monospace;
+                resize: both;
+            }
+
+            #logs > div:nth-child(odd) {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+        </style>
+    </head>
+    <body>
+        <h1>WebAuthn Example</h1>
+        <button onclick="register()">Register</button> <br />
+        <button onclick="authenticate()">Authenticate</button>
+        <div id="logs"></div>
+    </body>
+</html>
