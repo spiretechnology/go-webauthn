@@ -6,5 +6,5 @@ packages:
     config:
       dir: "internal/mocks"
     interfaces:
-      Challenges:
       Credentials:
+      Tokener:

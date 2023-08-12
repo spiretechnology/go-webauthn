@@ -9,6 +9,7 @@ import (
 
 // AuthenticationChallenge is the challenge that is sent to the client to initiate an authentication ceremony.
 type AuthenticationChallenge struct {
+	Token            string              `json:"token"`
 	Challenge        string              `json:"challenge"`
 	RPID             string              `json:"rpId"`
 	AllowCredentials []AllowedCredential `json:"allowCredentials"`
@@ -36,15 +37,18 @@ func (w *webauthn) CreateAuthentication(ctx context.Context, user User) (*Authen
 		return nil, errutil.Wrapf(err, "generating challenge")
 	}
 
-	// Store the challenge in the challenge store
-	if err := w.options.Challenges.StoreChallenge(ctx, user, challengeBytes); err != nil {
-		return nil, errutil.Wrapf(err, "storing challenge")
+	// Create the token for the challenge
+	token, err := w.options.Tokener.CreateToken(challengeBytes, user)
+	if err != nil {
+		return nil, errutil.Wrapf(err, "creating token")
 	}
 
 	// Format the response
-	var res AuthenticationChallenge
-	res.Challenge = w.options.Codec.EncodeToString(challengeBytes[:])
-	res.RPID = w.options.RP.ID
+	res := AuthenticationChallenge{
+		Token:     token,
+		Challenge: w.options.Codec.EncodeToString(challengeBytes[:]),
+		RPID:      w.options.RP.ID,
+	}
 	for _, cred := range credentials {
 		res.AllowCredentials = append(res.AllowCredentials, AllowedCredential{
 			Type: cred.Type,
