@@ -17,7 +17,7 @@ func seedMockWithCredential(t *testing.T, tc testutil.TestCase, w webauthn.WebAu
 	// Seed the store with a valid credential
 	challenges.On("HasChallenge", mock.Anything, tc.User, tc.RegistrationChallenge()).Return(true, nil).Once()
 	challenges.On("RemoveChallenge", mock.Anything, tc.User, tc.RegistrationChallenge()).Return(nil).Once()
-	credentials.On("StoreCredential", mock.Anything, tc.User, mock.Anything).Return(nil).Once()
+	credentials.On("StoreCredential", mock.Anything, tc.User, mock.Anything, mock.Anything).Return(nil).Once()
 	reg, err := w.VerifyRegistration(context.Background(), tc.User, &tc.Registration)
 	require.NoError(t, err, "seeding credential should not error")
 	return reg.Credential

@@ -133,13 +133,13 @@ func (_c *MockCredentials_GetCredentials_Call) RunAndReturn(run func(context.Con
 	return _c
 }
 
-// StoreCredential provides a mock function with given fields: ctx, user, credential
-func (_m *MockCredentials) StoreCredential(ctx context.Context, user webauthn.User, credential webauthn.Credential) error {
-	ret := _m.Called(ctx, user, credential)
+// StoreCredential provides a mock function with given fields: ctx, user, credential, meta
+func (_m *MockCredentials) StoreCredential(ctx context.Context, user webauthn.User, credential webauthn.Credential, meta webauthn.CredentialMeta) error {
+	ret := _m.Called(ctx, user, credential, meta)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, webauthn.User, webauthn.Credential) error); ok {
-		r0 = rf(ctx, user, credential)
+	if rf, ok := ret.Get(0).(func(context.Context, webauthn.User, webauthn.Credential, webauthn.CredentialMeta) error); ok {
+		r0 = rf(ctx, user, credential, meta)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -156,13 +156,14 @@ type MockCredentials_StoreCredential_Call struct {
 //   - ctx context.Context
 //   - user webauthn.User
 //   - credential webauthn.Credential
-func (_e *MockCredentials_Expecter) StoreCredential(ctx interface{}, user interface{}, credential interface{}) *MockCredentials_StoreCredential_Call {
-	return &MockCredentials_StoreCredential_Call{Call: _e.mock.On("StoreCredential", ctx, user, credential)}
+//   - meta webauthn.CredentialMeta
+func (_e *MockCredentials_Expecter) StoreCredential(ctx interface{}, user interface{}, credential interface{}, meta interface{}) *MockCredentials_StoreCredential_Call {
+	return &MockCredentials_StoreCredential_Call{Call: _e.mock.On("StoreCredential", ctx, user, credential, meta)}
 }
 
-func (_c *MockCredentials_StoreCredential_Call) Run(run func(ctx context.Context, user webauthn.User, credential webauthn.Credential)) *MockCredentials_StoreCredential_Call {
+func (_c *MockCredentials_StoreCredential_Call) Run(run func(ctx context.Context, user webauthn.User, credential webauthn.Credential, meta webauthn.CredentialMeta)) *MockCredentials_StoreCredential_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run(args[0].(context.Context), args[1].(webauthn.User), args[2].(webauthn.Credential))
+		run(args[0].(context.Context), args[1].(webauthn.User), args[2].(webauthn.Credential), args[3].(webauthn.CredentialMeta))
 	})
 	return _c
 }
@@ -172,7 +173,7 @@ func (_c *MockCredentials_StoreCredential_Call) Return(_a0 error) *MockCredentia
 	return _c
 }
 
-func (_c *MockCredentials_StoreCredential_Call) RunAndReturn(run func(context.Context, webauthn.User, webauthn.Credential) error) *MockCredentials_StoreCredential_Call {
+func (_c *MockCredentials_StoreCredential_Call) RunAndReturn(run func(context.Context, webauthn.User, webauthn.Credential, webauthn.CredentialMeta) error) *MockCredentials_StoreCredential_Call {
 	_c.Call.Return(run)
 	return _c
 }

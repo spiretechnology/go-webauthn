@@ -13,6 +13,11 @@ type Credential struct {
 	// PublicKeyAlg is the `publicKeyAlg` of the credential, as defined in the WebAuthn spec.
 	// See `PublicKeyType` for supported values.
 	PublicKeyAlg int
+}
+
+// CredentialMeta contains metadata about a credential. Storing this information is not needed for
+// the authentication flow, but may be useful for other purposes.
+type CredentialMeta struct {
 	// Authenticator is the model of the authenticator used to create this credential. May be nil.
 	Authenticator *authenticators.Authenticator
 }

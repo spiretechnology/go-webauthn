@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 
 	"github.com/spiretechnology/go-webauthn/internal/errutil"
+	"github.com/spiretechnology/go-webauthn/pkg/authenticators"
 	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 	"github.com/spiretechnology/go-webauthn/pkg/errs"
 	"github.com/spiretechnology/go-webauthn/pkg/pubkey"
@@ -138,7 +139,10 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 		PublicKey:    publicKeyBytes,
 		PublicKeyAlg: int(authData.AttestedCredential.CredPublicKeyType),
 	}
-	if err := w.options.Credentials.StoreCredential(ctx, user, cred); err != nil {
+	meta := CredentialMeta{
+		Authenticator: authenticators.LookupAuthenticator(authData.AttestedCredential.AAGUID),
+	}
+	if err := w.options.Credentials.StoreCredential(ctx, user, cred, meta); err != nil {
 		return nil, errutil.Wrapf(err, "storing credential")
 	}
 

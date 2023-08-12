@@ -38,7 +38,7 @@ func TestVerifyRegistration(t *testing.T) {
 				})
 				challenges.On("HasChallenge", mock.Anything, tc.User, tcChallenge).Return(true, nil).Once()
 				challenges.On("RemoveChallenge", mock.Anything, tc.User, tcChallenge).Return(nil).Once()
-				credentials.On("StoreCredential", mock.Anything, tc.User, mock.Anything).Return(nil).Once()
+				credentials.On("StoreCredential", mock.Anything, tc.User, mock.Anything, mock.Anything).Return(nil).Once()
 
 				result, err := w.VerifyRegistration(ctx, tc.User, &tc.Registration)
 				require.Nil(t, err, "error should be nil")

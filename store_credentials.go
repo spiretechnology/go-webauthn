@@ -6,5 +6,5 @@ import "context"
 type Credentials interface {
 	GetCredentials(ctx context.Context, user User) ([]Credential, error)
 	GetCredential(ctx context.Context, user User, credentialID []byte) (*Credential, error)
-	StoreCredential(ctx context.Context, user User, credential Credential) error
+	StoreCredential(ctx context.Context, user User, credential Credential, meta CredentialMeta) error
 }
