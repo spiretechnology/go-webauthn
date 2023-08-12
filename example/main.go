@@ -3,6 +3,7 @@ package main
 import (
 	_ "embed"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -80,6 +81,7 @@ func main() {
 		Addr:    "127.0.0.1:4000",
 		Handler: mux,
 	}
+	fmt.Println("Listening on http://localhost:4000")
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatalln("Server error: ", err)
 	}
