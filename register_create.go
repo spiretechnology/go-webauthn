@@ -27,10 +27,19 @@ func (w *webauthn) CreateRegistration(ctx context.Context, user User) (*Registra
 		return nil, errutil.Wrapf(err, "storing challenge")
 	}
 
+	// Format the public key credential params for the client
+	pubKeyCredParams := make([]spec.PubKeyCredParam, len(w.options.PublicKeyTypes))
+	for i, keyType := range w.options.PublicKeyTypes {
+		pubKeyCredParams[i] = spec.PubKeyCredParam{
+			Type: "public-key",
+			Alg:  int(keyType),
+		}
+	}
+
 	return &RegistrationChallenge{
 		Challenge:        w.options.Codec.EncodeToString(challengeBytes[:]),
 		RP:               w.options.RP,
 		User:             user,
-		PubKeyCredParams: w.getPubKeyCredParams(),
+		PubKeyCredParams: pubKeyCredParams,
 	}, nil
 }

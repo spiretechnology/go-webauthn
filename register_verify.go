@@ -10,6 +10,7 @@ import (
 	"github.com/spiretechnology/go-webauthn/pkg/errs"
 	"github.com/spiretechnology/go-webauthn/pkg/pubkey"
 	"github.com/spiretechnology/go-webauthn/pkg/spec"
+	"golang.org/x/exp/slices"
 )
 
 // RegistrationResponse is the response sent back by the client after a registration ceremony.
@@ -108,13 +109,14 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 	}
 
 	// Check if the public key alg is supported
-	if !w.supportsPublicKeyAlg(authData.AttestedCredential.CredPublicKeyType) {
+	if !slices.Contains(w.options.PublicKeyTypes, authData.AttestedCredential.CredPublicKeyType) {
 		return nil, errutil.Wrap(errs.ErrUnsupportedPublicKey)
 	}
 
 	// Verify the signature of the response
-	// authData.AttestedCredential.CredPublicKey
-	// ...
+	if err := attestationResponse.Verify(); err != nil {
+		return nil, errutil.Wrapf(err, "verifying signature")
+	}
 
 	//================================================================================
 	// Store the credential and return successfully

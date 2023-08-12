@@ -7,7 +7,6 @@ import (
 	"github.com/spiretechnology/go-webauthn/pkg/challenge"
 	"github.com/spiretechnology/go-webauthn/pkg/codec"
 	"github.com/spiretechnology/go-webauthn/pkg/pubkey"
-	"github.com/spiretechnology/go-webauthn/pkg/spec"
 )
 
 type WebAuthn interface {
@@ -34,10 +33,7 @@ func New(options Options) WebAuthn {
 		options.Challenges = NewChallengesInMemory()
 	}
 	if options.PublicKeyTypes == nil {
-		options.PublicKeyTypes = []pubkey.KeyType{
-			pubkey.ES256, pubkey.ES384, pubkey.ES512,
-			pubkey.PS256, pubkey.PS384, pubkey.PS512,
-		}
+		options.PublicKeyTypes = pubkey.AllKeyTypes
 	}
 	if options.ChallengeFunc == nil {
 		options.ChallengeFunc = challenge.GenerateChallenge
@@ -47,24 +43,4 @@ func New(options Options) WebAuthn {
 
 type webauthn struct {
 	options Options
-}
-
-func (w *webauthn) getPubKeyCredParams() []spec.PubKeyCredParam {
-	params := make([]spec.PubKeyCredParam, len(w.options.PublicKeyTypes))
-	for i, keyType := range w.options.PublicKeyTypes {
-		params[i] = spec.PubKeyCredParam{
-			Type: "public-key",
-			Alg:  int(keyType),
-		}
-	}
-	return params
-}
-
-func (w *webauthn) supportsPublicKeyAlg(alg pubkey.KeyType) bool {
-	for _, keyType := range w.options.PublicKeyTypes {
-		if keyType == alg {
-			return true
-		}
-	}
-	return false
 }

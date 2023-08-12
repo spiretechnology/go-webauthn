@@ -4,9 +4,6 @@ import (
 	"crypto"
 	"crypto/ecdsa"
 	"crypto/rsa"
-
-	"github.com/spiretechnology/go-webauthn/internal/errutil"
-	"github.com/spiretechnology/go-webauthn/pkg/errs"
 )
 
 // See here for the COSE key type registry:
@@ -33,6 +30,13 @@ const (
 	PS512 = KeyType(-39)
 )
 
+// AllKeyTypes is a list of all supported key types.
+var AllKeyTypes = []KeyType{
+	ES256, ES384, ES512,
+	RS256, RS256, RS256,
+	PS256, PS384, PS512,
+}
+
 // KeyType is a type of public key and signature algorithm.
 type KeyType int
 
@@ -51,16 +55,14 @@ func (k KeyType) Hash() crypto.Hash {
 }
 
 // CheckKey checks that the given public key is valid for this public key type.
-func (k KeyType) CheckKey(key crypto.PublicKey) error {
+func (k KeyType) CheckKey(key crypto.PublicKey) bool {
 	switch k {
 	case ES256, ES384, ES512:
-		if _, ok := key.(*ecdsa.PublicKey); ok {
-			return nil
-		}
+		_, ok := key.(*ecdsa.PublicKey)
+		return ok
 	case RS256, RS384, RS512, PS256, PS384, PS512:
-		if _, ok := key.(*rsa.PublicKey); ok {
-			return nil
-		}
+		_, ok := key.(*rsa.PublicKey)
+		return ok
 	}
-	return errutil.Wrap(errs.ErrInvalidKeyForAlg)
+	return false
 }

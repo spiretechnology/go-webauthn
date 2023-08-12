@@ -47,7 +47,7 @@ func TestCreateRegistration(t *testing.T) {
 				require.Equal(t, tc.User.ID, challenge.User.ID, "user id should match")
 				require.Equal(t, tc.User.Name, challenge.User.Name, "user name should match")
 				require.Equal(t, tc.User.DisplayName, challenge.User.DisplayName, "user display name should match")
-				require.Equal(t, 6, len(challenge.PubKeyCredParams), "pub key cred params should match")
+				require.Equal(t, 9, len(challenge.PubKeyCredParams), "pub key cred params should match")
 
 				credentials.AssertExpectations(t)
 				challenges.AssertExpectations(t)

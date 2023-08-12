@@ -100,16 +100,9 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 	// Verify the returned signature
 	//================================================================================
 
-	// Get the public key alg type from the credential
-	publicKeyAlg := pubkey.KeyType(credential.PublicKeyAlg)
-
 	// Verify the signature using the signature algorithm for the stored credential
-	verified, err := assertionResponse.VerifySignature(publicKey, publicKeyAlg.Hash())
-	if err != nil {
+	if err := assertionResponse.Verify(publicKey, pubkey.KeyType(credential.PublicKeyAlg)); err != nil {
 		return nil, errutil.Wrapf(err, "verifying signature")
-	}
-	if !verified {
-		return nil, errutil.Wrap(errs.ErrSignatureMismatch)
 	}
 
 	return &AuthenticationResult{
