@@ -25,7 +25,7 @@ func (s *myCredentialStore) GetCredential(ctx context.Context, user webauthn.Use
     // ...
 }
 
-func (s *myCredentialStore) StoreCredential(ctx context.Context, user webauthn.User, credential webauthn.Credential) error {
+func (s *myCredentialStore) StoreCredential(ctx context.Context, user webauthn.User, credential webauthn.Credential, meta webauthn.CredentialMeta) error {
     // ...
 }
 ```
