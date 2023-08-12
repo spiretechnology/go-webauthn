@@ -28,27 +28,27 @@ type AttestedCredential struct {
 	CredPublicKey []byte
 }
 
-func (c *AttestedCredential) Encode() []byte {
-	buf := make([]byte, 16+2+len(c.CredID)+len(c.CredPublicKey))
-	var cursor int
+// func (c *AttestedCredential) Encode() []byte {
+// 	buf := make([]byte, 16+2+len(c.CredID)+len(c.CredPublicKey))
+// 	var cursor int
 
-	// AAGUID
-	copy(buf[:16], c.AAGUID[:])
-	cursor += 16
+// 	// AAGUID
+// 	copy(buf[:16], c.AAGUID[:])
+// 	cursor += 16
 
-	// Cred ID length
-	binary.BigEndian.PutUint16(buf[cursor:cursor+2], uint16(len(c.CredID)))
-	cursor += 2
+// 	// Cred ID length
+// 	binary.BigEndian.PutUint16(buf[cursor:cursor+2], uint16(len(c.CredID)))
+// 	cursor += 2
 
-	// Cred ID
-	copy(buf[cursor:], c.CredID)
-	cursor += len(c.CredID)
+// 	// Cred ID
+// 	copy(buf[cursor:], c.CredID)
+// 	cursor += len(c.CredID)
 
-	// Cred public key
-	copy(buf[cursor:], c.CredPublicKey)
+// 	// Cred public key
+// 	copy(buf[cursor:], c.CredPublicKey)
 
-	return buf
-}
+// 	return buf
+// }
 
 func (c *AttestedCredential) Decode(buf []byte) error {
 	if len(buf) < 18 {

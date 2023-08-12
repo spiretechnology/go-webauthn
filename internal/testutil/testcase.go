@@ -12,6 +12,7 @@ type TestCase struct {
 	Registration   webauthn.RegistrationResponse   `json:"registration"`
 	Authentication webauthn.AuthenticationResponse `json:"authentication"`
 	Attestation    TestCase_Attestation            `json:"attestation"`
+	Assertion      TestCase_Assertion              `json:"assertion"`
 }
 
 type TestCase_Attestation struct {
@@ -21,6 +22,11 @@ type TestCase_Attestation struct {
 	AAGUIDHex        string   `json:"aaguidHex"`
 	CredIDHex        string   `json:"credIdHex"`
 	CredPublicKeyB64 string   `json:"credPublicKeyB64"`
+}
+
+type TestCase_Assertion struct {
+	Flags     []string `json:"flags"`
+	SignCount uint32   `json:"signCount"`
 }
 
 func (tc *TestCase) RegistrationChallenge() webauthn.Challenge {
@@ -40,7 +46,7 @@ func (tc *TestCase) Credential() *webauthn.Credential {
 	}
 }
 
-func (tca *TestCase_Attestation) FlagsUInt8() uint8 {
+func ParseFlags(flagsStrs []string) uint8 {
 	flagsMap := map[string]uint8{
 		"UserPresent":            spec.AuthDataFlag_UserPresent,
 		"RFU1":                   spec.AuthDataFlag_RFU1,
@@ -52,7 +58,7 @@ func (tca *TestCase_Attestation) FlagsUInt8() uint8 {
 		"ExtensionData":          spec.AuthDataFlag_ExtensionData,
 	}
 	var flags uint8
-	for _, flag := range tca.Flags {
+	for _, flag := range flagsStrs {
 		flags |= flagsMap[flag]
 	}
 	return flags

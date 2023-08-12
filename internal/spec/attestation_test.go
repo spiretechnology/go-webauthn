@@ -28,7 +28,7 @@ func TestAttestationObject(t *testing.T) {
 				require.NotNil(t, authData, "auth data should not be nil")
 
 				require.Equal(t, sha256.Sum256([]byte(tc.RelyingParty.ID)), authData.RPIDHash, "rp id hash should match")
-				require.Equal(t, tc.Attestation.FlagsUInt8(), authData.Flags, "flags should match")
+				require.Equal(t, testutil.ParseFlags(tc.Attestation.Flags), authData.Flags, "flags should match")
 				require.Equal(t, tc.Attestation.SignCount, authData.SignCount, "sign count should match")
 				require.Equal(t, tc.Attestation.AAGUIDHex, hex.EncodeToString(authData.AttestedCredential.AAGUID[:]), "aaguid should match")
 				require.Equal(t, tc.Attestation.CredIDHex, hex.EncodeToString(authData.AttestedCredential.CredID), "cred id should match")

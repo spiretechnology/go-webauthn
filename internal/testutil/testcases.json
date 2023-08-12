@@ -12,6 +12,10 @@
             "aaguidHex":        "00000000000000000000000000000000",
             "credIdHex":        "5fe214b83132a481264610367f2dcdbbabc413a050ab1f950c06aa0f6ebdbce4909be1909f233c984eb2e288a35cf27cb6e2a2529ed3b58df16f52a2ce7dbd3b",
             "credPublicKeyB64": "pQECAyYgASFYIC29IDV3iTqNUsDeCxdkrbEVW5BHYYALPYx02KOnF5h4Ilgg4C9mc07FRbVxj7mq3tPvP6AZCf-GztFjORt9BXU2YO4"
+        },
+        "assertion": {
+            "flags":     ["UserPresent"],
+            "signCount": 4
         }
     },
     {
@@ -27,6 +31,10 @@
             "aaguidHex":        "00000000000000000000000000000000",
             "credIdHex":        "395f26cd500ae3be0ca6ad41bfe269ebceaab1dd46d27327c7d1bcfd940ba827a61924cbe39f76eb5464e5ebe0a7244e30da38ba9b7cf046e8a11310e296d026",
             "credPublicKeyB64": "pQECAyYgASFYIFyBYTNOp0xoUo41-29NUjK4aFlvYGLxNvp1Wem1EzjLIlggWzGUW99VC3AuoePfy7_A68fh4W5_gXXVhmoL47X-3sc"
+        },
+        "assertion": {
+            "flags":     ["UserPresent"],
+            "signCount": 7
         }
     },
     {
@@ -42,6 +50,10 @@
             "aaguidHex":        "00000000000000000000000000000000",
             "credIdHex":        "b05d63f2d52788804c9ba0f6e649cca05a3bf3f7",
             "credPublicKeyB64": "pQECAyYgASFYIFD9Km3kX7Rcmcn5qY34qTCe1w1Veg2Cl3scv8wU3-KlIlggRjFcsG6zPRicnEgLI6VdYoI0YFAuhRiSCrzT2ejIogE"
+        },
+        "assertion": {
+            "flags":     ["UserPresent", "UserVerified", "RFU2", "RFU3"],
+            "signCount": 0
         }
     },
     {
@@ -57,6 +69,10 @@
             "aaguidHex":        "00000000000000000000000000000000",
             "credIdHex":        "88da02170af0ce64c9835d83ab5f49dded0568ae",
             "credPublicKeyB64": "pQECAyYgASFYIOrn5xzwjOzDjZRJgMytQz-Mc3WKdTaRipGuqhYcqC8CIlggALld712ougeXgzMdE0sAzk-Y1xI7Lf-3yMhqnrPNH6o"
+        },
+        "assertion": {
+            "flags":     ["UserPresent", "UserVerified", "RFU2", "RFU3"],
+            "signCount": 0
         }
     },
     {
@@ -72,6 +88,10 @@
             "aaguidHex":        "ee882879721c491397753dfcce97072a",
             "credIdHex":        "c28e256565c40586acee051c4fbc087f843737890beec0c745ce682f7f5170c55de1ebab2b2b8e7348015d2fb858efed1eac45aaba31ae6ae63388aa51d967f4",
             "credPublicKeyB64": "pQECAyYgASFYIAJRGmt-o0aIA5SAF0ykytGP4HJgqWZRLEmXzJyd691RIlggxjFkOUnCce3ErgXzQIx31GrbwVwllqdmGo4ERgtUdZA"
+        },
+        "assertion": {
+            "flags":     ["UserPresent"],
+            "signCount": 6
         }
     },
     {
@@ -87,6 +107,10 @@
             "aaguidHex":        "ee882879721c491397753dfcce97072a",
             "credIdHex":        "4e7b39967b1f6bb964e73d78845d02445f473a33d254c21a08619b7ccf42254aec47f0b834039f0ceaa702f840a8904c150a91484caded60cd0041a1932be9df",
             "credPublicKeyB64": "pQECAyYgASFYIJi49K8p63_NRP9Gg4Eia8ub_8_IEMb6CYBDD3IsDv2SIlggEK7pMCPlk3kDQR2E14jB8SZFhOdFapk6sbWTDaesYCA"
+        },
+        "assertion": {
+            "flags":     ["UserPresent"],
+            "signCount": 3
         }
     }
 ]
