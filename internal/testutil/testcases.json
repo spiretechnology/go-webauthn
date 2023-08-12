@@ -150,5 +150,46 @@
             "flags":     ["UserPresent", "UserVerified", "RFU2", "RFU3"],
             "signCount": 0
         }
+    },
+    {
+        "name":           "icloud keychain direct attestation 1",
+        "relyingParty":   {"id": "localhost", "name": "Test"},
+        "user":           {"id": "AQIDBA", "name": "test", "displayName": "Test"},
+        "registration":   {"challenge":"tldgL6RIy03npx1p1ff2H1Wce0lWGsJOWxB4KJLDbO0","credentialId":"0CCOokMhLFQYmmH9xvSZDy-xT3o","response":{"clientDataJSON":"eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoidGxkZ0w2Ukl5MDNucHgxcDFmZjJIMVdjZTBsV0dzSk9XeEI0S0pMRGJPMCIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCJ9","attestationObject":"o2NmbXRkbm9uZWdhdHRTdG10oGhhdXRoRGF0YViYSZYN5YgOjGh0NBcPZHZgW4_krrmihjLHmVzzuoMdl2NdAAAAAAAAAAAAAAAAAAAAAAAAAAAAFNAgjqJDISxUGJph_cb0mQ8vsU96pQECAyYgASFYIJrSs4AjYp1c40uIn3472kLbxdZ9tLsXZBF1jxGveBj5Ilggnjh7YGWt8Lwnmd0Ku-ALllohiyHzai1zrN9O_OXWYyI"},"publicKey":"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEmtKzgCNinVzjS4iffjvaQtvF1n20uxdkEXWPEa94GPmeOHtgZa3wvCeZ3Qq74AuWWiGLIfNqLXOs30785dZjIg","publicKeyAlg":-7},
+        "authentication": {"challenge":"PSK6zBnFj4jSaXbWoU7NNBcGVbIJNGjv01_A_aFA5FU","credentialId":"0CCOokMhLFQYmmH9xvSZDy-xT3o","response":{"authenticatorData":"SZYN5YgOjGh0NBcPZHZgW4_krrmihjLHmVzzuoMdl2MdAAAAAA","clientDataJSON":"eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiUFNLNnpCbkZqNGpTYVhiV29VN05OQmNHVmJJSk5HanYwMV9BX2FGQTVGVSIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCJ9","signature":"MEUCIC7F58qfcNpo5G5LdOQYrcvBTLCDJe54H7pPl_GYL0BOAiEAthsuEOzVMO-XyOreMOCuGThNUpsYeTgHTWPv4wVskgU","userHandle":"AQIDBA"}},
+        "attestation": {
+            "fmt":              "none",
+            "flags":            ["UserPresent", "UserVerified", "RFU2", "RFU3", "AttestedCredentialData"],
+            "signCount":        0,
+            "aaguidHex":        "00000000000000000000000000000000",
+            "credIdHex":        "d0208ea243212c54189a61fdc6f4990f2fb14f7a",
+            "credPublicKeyB64": "pQECAyYgASFYIJrSs4AjYp1c40uIn3472kLbxdZ9tLsXZBF1jxGveBj5Ilggnjh7YGWt8Lwnmd0Ku-ALllohiyHzai1zrN9O_OXWYyI"
+        },
+        "assertion": {
+            "flags":     ["UserPresent", "UserVerified", "RFU2", "RFU3"],
+            "signCount": 0
+        }
+    },
+    {
+        "name":           "google chrome passkey direct attestation 1",
+        "relyingParty":   {"id": "localhost", "name": "Test"},
+        "user":           {"id": "AQIDBA", "name": "test", "displayName": "Test"},
+        "registration":   {"challenge":"EYc31P9FFCnl598wRB2i8cmcz6ThyhW-zNGUmm2JzDc","credentialId":"PiLRkCr976lMNnLDM2uRlWh0rNO73f_pAVZM7DEMYJk","response":{"clientDataJSON":"eyJ0eXBlIjoid2ViYXV0aG4uY3JlYXRlIiwiY2hhbGxlbmdlIjoiRVljMzFQOUZGQ25sNTk4d1JCMmk4Y21jejZUaHloVy16TkdVbW0ySnpEYyIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCIsImNyb3NzT3JpZ2luIjpmYWxzZSwib3RoZXJfa2V5c19jYW5fYmVfYWRkZWRfaGVyZSI6ImRvIG5vdCBjb21wYXJlIGNsaWVudERhdGFKU09OIGFnYWluc3QgYSB0ZW1wbGF0ZS4gU2VlIGh0dHBzOi8vZ29vLmdsL3lhYlBleCJ9","attestationObject":"o2NmbXRmcGFja2VkZ2F0dFN0bXSiY2FsZyZjc2lnWEgwRgIhAK16kBjarVM6zvj8aWxsi051DcCH69gSz1Q10zUI_9VrAiEAmcZXqwGdnKhZ8ID9IRmt8A1fkZVnlCjGdZ8b_NLWt05oYXV0aERhdGFYpEmWDeWIDoxodDQXD2R2YFuP5K65ooYyx5lc87qDHZdjRQAAAACtzgACNbzGCmSLCyXx8FUDACA-ItGQKv3vqUw2csMza5GVaHSs07vd_-kBVkzsMQxgmaUBAgMmIAEhWCBhVrbGZmJhDIrfPQk9Ewkiz3xIwXly_48eSgFqWK_FyyJYILzm0AwdinOdkkkFRMrgvh5pv0ibtBJiFa81zROSgHRH"},"publicKey":"MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEYVa2xmZiYQyK3z0JPRMJIs98SMF5cv-PHkoBalivxcu85tAMHYpznZJJBUTK4L4eab9Im7QSYhWvNc0TkoB0Rw","publicKeyAlg":-7},
+        "authentication": {"challenge":"1EuG9mJH0DlUFOtqMelAoLNrcivZrxLo-sf_MtczoAU","credentialId":"PiLRkCr976lMNnLDM2uRlWh0rNO73f_pAVZM7DEMYJk","response":{"authenticatorData":"SZYN5YgOjGh0NBcPZHZgW4_krrmihjLHmVzzuoMdl2MFAAAAAA","clientDataJSON":"eyJ0eXBlIjoid2ViYXV0aG4uZ2V0IiwiY2hhbGxlbmdlIjoiMUV1RzltSkgwRGxVRk90cU1lbEFvTE5yY2l2WnJ4TG8tc2ZfTXRjem9BVSIsIm9yaWdpbiI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCIsImNyb3NzT3JpZ2luIjpmYWxzZX0","signature":"MEUCIA3NMkv55WGGSjNKphJN7CHoX8qrCYUC-jfGfbLxyNtJAiEA_96kZOR-CD2CkUWi1kOtEt9x8jngm_VMhCTPHaPAlVY","userHandle":"AQIDBA"}},
+        "attestation": {
+            "fmt":              "packed",
+            "flags":            ["UserPresent", "UserVerified", "AttestedCredentialData"],
+            "signCount":        0,
+            "aaguidHex":        "adce000235bcc60a648b0b25f1f05503",
+            "credIdHex":        "3e22d1902afdefa94c3672c3336b91956874acd3bbddffe901564cec310c6099",
+            "credPublicKeyB64": "pQECAyYgASFYIGFWtsZmYmEMit89CT0TCSLPfEjBeXL_jx5KAWpYr8XLIlggvObQDB2Kc52SSQVEyuC-Hmm_SJu0EmIVrzXNE5KAdEc"
+        },
+        "assertion": {
+            "flags":     ["UserPresent", "UserVerified"],
+            "signCount": 0
+        }
     }
 ]
+
+
+
