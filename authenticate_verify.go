@@ -61,7 +61,7 @@ func (w *webauthn) VerifyAuthentication(ctx context.Context, user User, res *Aut
 	}
 
 	// Decode the public key from the credential store
-	publicKey, err := pubkey.Parse(credential.PublicKey)
+	publicKey, err := pubkey.Decode(credential.PublicKey)
 	if err != nil {
 		return nil, errutil.Wrapf(err, "parsing public key")
 	}

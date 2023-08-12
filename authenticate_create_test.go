@@ -15,6 +15,8 @@ import (
 
 func TestCreateAuthentication(t *testing.T) {
 	ctx := context.Background()
+	testCred := webauthn.Credential{}
+
 	for _, tc := range testutil.TestCases {
 		tcChallenge := tc.AuthenticationChallenge()
 
@@ -33,7 +35,7 @@ func TestCreateAuthentication(t *testing.T) {
 
 			t.Run("storing challenge fails", func(t *testing.T) {
 				w, credentials, challenges := setupMocks(tc, nil)
-				credentials.On("GetCredentials", ctx, tc.User).Return([]webauthn.Credential{*tc.Credential()}, nil).Once()
+				credentials.On("GetCredentials", ctx, tc.User).Return([]webauthn.Credential{testCred}, nil).Once()
 				challenges.On("StoreChallenge", mock.Anything, tc.User, mock.Anything).Return(errors.New("test error")).Once()
 
 				challenge, err := w.CreateAuthentication(ctx, tc.User)
@@ -50,7 +52,7 @@ func TestCreateAuthentication(t *testing.T) {
 						return tcChallenge, nil
 					},
 				})
-				credentials.On("GetCredentials", ctx, tc.User).Return([]webauthn.Credential{*tc.Credential()}, nil).Once()
+				credentials.On("GetCredentials", ctx, tc.User).Return([]webauthn.Credential{testCred}, nil).Once()
 				challenges.On("StoreChallenge", mock.Anything, tc.User, mock.Anything).Return(nil).Once()
 
 				challenge, err := w.CreateAuthentication(ctx, tc.User)

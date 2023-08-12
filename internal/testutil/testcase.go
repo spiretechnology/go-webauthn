@@ -17,12 +17,11 @@ type TestCase struct {
 }
 
 type TestCase_Attestation struct {
-	Fmt              string   `json:"fmt"`
-	Flags            []string `json:"flags"`
-	SignCount        uint32   `json:"signCount"`
-	AAGUIDHex        string   `json:"aaguidHex"`
-	CredIDHex        string   `json:"credIdHex"`
-	CredPublicKeyB64 string   `json:"credPublicKeyB64"`
+	Fmt       string   `json:"fmt"`
+	Flags     []string `json:"flags"`
+	SignCount uint32   `json:"signCount"`
+	AAGUIDHex string   `json:"aaguidHex"`
+	CredIDHex string   `json:"credIdHex"`
 }
 
 type TestCase_Assertion struct {
@@ -36,15 +35,6 @@ func (tc *TestCase) RegistrationChallenge() challenge.Challenge {
 
 func (tc *TestCase) AuthenticationChallenge() challenge.Challenge {
 	return challenge.Challenge(Decode(tc.Authentication.Challenge))
-}
-
-func (tc *TestCase) Credential() *webauthn.Credential {
-	return &webauthn.Credential{
-		ID:           Decode(tc.Registration.CredentialID),
-		Type:         "public-key",
-		PublicKey:    Decode(tc.Registration.PublicKey),
-		PublicKeyAlg: tc.Registration.PublicKeyAlg,
-	}
 }
 
 func ParseFlags(flagsStrs []string) uint8 {

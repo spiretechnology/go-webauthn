@@ -32,7 +32,14 @@ func TestAttestationObject(t *testing.T) {
 				require.Equal(t, tc.Attestation.SignCount, authData.SignCount, "sign count should match")
 				require.Equal(t, tc.Attestation.AAGUIDHex, hex.EncodeToString(authData.AttestedCredential.AAGUID[:]), "aaguid should match")
 				require.Equal(t, tc.Attestation.CredIDHex, hex.EncodeToString(authData.AttestedCredential.CredID), "cred id should match")
-				require.Equal(t, testutil.Decode(tc.Attestation.CredPublicKeyB64), authData.AttestedCredential.CredPublicKey, "cred public key should match")
+
+				// fmt.Printf("PublicKey: %T, %v\n", authData.AttestedCredential.CredPublicKey, authData.AttestedCredential.CredPublicKey)
+				// encodedPubKey, err := pubkey.Encode(authData.AttestedCredential.CredPublicKey)
+				// require.NoError(t, err, "encode cred public key should not error")
+				// require.Equal(t, testutil.Decode(tc.Key.PublicKeyB64), encodedPubKey, "cred public key should match")
+
+				err = authData.AttestedCredential.CredPublicKeyType.CheckKey(authData.AttestedCredential.CredPublicKey)
+				require.NoError(t, err, "check key should not error")
 
 				// fmt.Println("AAGUID: ", hex.EncodeToString(authData.AttestedCredential.AAGUID[:]))
 				// fmt.Println("CredID: ", hex.EncodeToString(authData.AttestedCredential.CredID))

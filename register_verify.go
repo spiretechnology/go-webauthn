@@ -16,8 +16,6 @@ type RegistrationResponse struct {
 	Challenge    string                           `json:"challenge"`
 	CredentialID string                           `json:"credentialId"`
 	Response     AuthenticatorAttestationResponse `json:"response"`
-	PublicKey    string                           `json:"publicKey"`
-	PublicKeyAlg int                              `json:"publicKeyAlg"`
 }
 
 // RegistrationResult contains the results of verifying the registration respose.
@@ -46,17 +44,6 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 	// Remove the challenge from the store. It's no longer needed.
 	if err := w.options.Challenges.RemoveChallenge(ctx, user, challengeBytes); err != nil {
 		return nil, errutil.Wrapf(err, "removing challenge")
-	}
-
-	// Check if the public key alg is supported
-	if !w.supportsPublicKeyAlg(pubkey.KeyType(res.PublicKeyAlg)) {
-		return nil, errutil.Wrap(errs.ErrUnsupportedPublicKey)
-	}
-
-	// Decode the public key into a byte slice
-	publicKeyBytes, err := w.options.Codec.DecodeString(res.PublicKey)
-	if err != nil {
-		return nil, errutil.Wrapf(err, "decoding public key")
 	}
 
 	// Decode the attestation response to spec types
@@ -110,10 +97,22 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 		return nil, errutil.Wrapf(err, "invalid RP ID hash")
 	}
 
-	// Verify that the flags are valid
-	// ...
+	//================================================================================
+	// Decode and validate the public key
+	//================================================================================
 
-	// Verify that the attested credential data is valid
+	// Check if there is an attested credential
+	if authData.AttestedCredential == nil {
+		return nil, errutil.New("no attested credential")
+	}
+
+	// Check if the public key alg is supported
+	if !w.supportsPublicKeyAlg(authData.AttestedCredential.CredPublicKeyType) {
+		return nil, errutil.Wrap(errs.ErrUnsupportedPublicKey)
+	}
+
+	// Verify the signature of the response
+	// authData.AttestedCredential.CredPublicKey
 	// ...
 
 	//================================================================================
@@ -126,12 +125,18 @@ func (w *webauthn) VerifyRegistration(ctx context.Context, user User, res *Regis
 		return nil, errutil.Wrapf(err, "decoding credential ID")
 	}
 
+	// Encode the public key to DER bytes for storage
+	publicKeyBytes, err := pubkey.Encode(authData.AttestedCredential.CredPublicKey)
+	if err != nil {
+		return nil, errutil.Wrapf(err, "encoding public key")
+	}
+
 	// Store the credential for the user
 	cred := Credential{
 		ID:           credentialIDBytes,
 		Type:         "public-key",
 		PublicKey:    publicKeyBytes,
-		PublicKeyAlg: res.PublicKeyAlg,
+		PublicKeyAlg: int(authData.AttestedCredential.CredPublicKeyType),
 	}
 	if err := w.options.Credentials.StoreCredential(ctx, user, cred); err != nil {
 		return nil, errutil.Wrapf(err, "storing credential")

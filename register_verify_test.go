@@ -48,26 +48,26 @@ func TestVerifyRegistration(t *testing.T) {
 				challenges.AssertExpectations(t)
 			})
 
-			t.Run("fails with invalid public key alg", func(t *testing.T) {
-				w, credentials, challenges := setupMocks(tc, &webauthn.Options{
-					ChallengeFunc: func() (challenge.Challenge, error) {
-						return tcChallenge, nil
-					},
-				})
-				challenges.On("HasChallenge", mock.Anything, tc.User, tcChallenge).Return(true, nil).Once()
-				challenges.On("RemoveChallenge", mock.Anything, tc.User, tcChallenge).Return(nil).Once()
+			// t.Run("fails with invalid public key alg", func(t *testing.T) {
+			// 	w, credentials, challenges := setupMocks(tc, &webauthn.Options{
+			// 		ChallengeFunc: func() (challenge.Challenge, error) {
+			// 			return tcChallenge, nil
+			// 		},
+			// 	})
+			// 	challenges.On("HasChallenge", mock.Anything, tc.User, tcChallenge).Return(true, nil).Once()
+			// 	challenges.On("RemoveChallenge", mock.Anything, tc.User, tcChallenge).Return(nil).Once()
 
-				// Switch to an unsupported public key alg
-				res := &tc.Registration
-				res.PublicKeyAlg = 0
+			// 	// Switch to an unsupported public key alg
+			// 	res := &tc.Registration
+			// 	res.PublicKeyAlg = 0
 
-				result, err := w.VerifyRegistration(ctx, tc.User, res)
-				require.Nil(t, result, "result should be nil")
-				require.Error(t, err, "error should not be nil")
+			// 	result, err := w.VerifyRegistration(ctx, tc.User, res)
+			// 	require.Nil(t, result, "result should be nil")
+			// 	require.Error(t, err, "error should not be nil")
 
-				credentials.AssertExpectations(t)
-				challenges.AssertExpectations(t)
-			})
+			// 	credentials.AssertExpectations(t)
+			// 	challenges.AssertExpectations(t)
+			// })
 		})
 	}
 }

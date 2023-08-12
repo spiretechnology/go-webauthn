@@ -32,16 +32,6 @@
                             name: 'test',
                             displayName: 'Test'
                         },
-                        // authenticatorSelection: {
-                        //     authenticatorAttachment: 'platform',
-                        //     // userVerification: 'preferred',
-                        //     requireResidentKey: true,
-                        // },
-                        // authenticatorSelection: {
-                        //     // authenticatorAttachment: 'cross-platform',
-                        //     // userVerification: 'preferred',
-                        //     // requireResidentKey: false,
-                        // },
                         attestation: 'direct',
                         pubKeyCredParams: [
                             { type: 'public-key', alg: -7 },
@@ -58,8 +48,6 @@
                         clientDataJSON: encode(cred.response.clientDataJSON),
                         attestationObject: encode(cred.response.attestationObject),
                     },
-                    publicKey: encode(cred.response.getPublicKey()),
-                    publicKeyAlg: cred.response.getPublicKeyAlgorithm(),
                 }));
             }
 

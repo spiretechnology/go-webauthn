@@ -63,33 +63,3 @@ func (a *AuthenticatorData) Decode(buf []byte) error {
 
 	return nil
 }
-
-// func (a *AuthenticatorData) Encode() []byte {
-// 	// Encode the attested credential
-// 	var attCredBytes []byte
-// 	if a.AttestedCredential != nil {
-// 		attCredBytes = a.AttestedCredential.Encode()
-// 	}
-
-// 	buf := make([]byte, sha256.Size+5+len(attCredBytes))
-// 	var cursor int
-
-// 	// RPID hash
-// 	copy(buf[:sha256.Size], a.RPIDHash[:])
-// 	cursor += sha256.Size
-
-// 	// Flags
-// 	buf[cursor] = a.Flags
-// 	cursor++
-
-// 	// Sign count
-// 	binary.BigEndian.PutUint32(buf[cursor:cursor+4], a.SignCount)
-// 	cursor += 4
-
-// 	// Att Credential
-// 	if attCredBytes != nil {
-// 		copy(buf[cursor:], attCredBytes)
-// 	}
-
-// 	return buf
-// }
