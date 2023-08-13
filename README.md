@@ -111,3 +111,13 @@ result, err := wa.AuthenticationRegistration(ctx, user, response)
 For both registration and authentication, the client is responsible for requesting challenges from the server, and responding to those challenges.
 
 We recommend using our [js-webauthn](https://github.com/spiretechnology/js-webauthn) library to handle the client-side flow for you. That library is designed to work with this one.
+
+## Example project
+
+For a full example of both the server and client flow, run the example project in this repo:
+
+```sh
+go run ./example
+```
+
+Then open http://localhost:4000 in your browser.
