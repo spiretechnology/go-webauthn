@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+    <head>
+        <script src="https://github.com/spiretechnology/js-webauthn/releases/download/v1.1.5/js-webauthn-browser.js"></script>
+        <script type="text/javascript">
+            const client = new webauthn.WebAuthnClient();
+
+            async function register() {
+                // Request a challenge from the server
+                const challenge = await fetch('/api/register-challenge').then(r => r.json());
+
+                // Register a device with the WebAuthn client
+                const response = await client.register(challenge);
+
+                // Send the response to the server
+                const result = await fetch('/api/register-verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(response)
+                }).then(r => r.json())
+                // Just deleting this field to make the JSON more readable
+                if (result && result.Meta && result.Meta.Authenticator && result && result.Meta && result.Meta.Authenticator.AAGUID) {
+                    delete result.Meta.Authenticator.AAGUID;
+                }
+                appendLog('registration', result);
+            }
+
+            async function authenticate() {
+                // Request a challenge from the server
+                const challenge = await fetch('/api/authenticate-challenge').then(r => r.json());
+
+                // Authenticate with the WebAuthn client
+                const response = await client.authenticate(challenge);
+
+                // Send the response to the server
+                const result = await fetch('/api/authenticate-verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(response)
+                }).then(r => r.json())
+                appendLog('authentication', result);
+            }
+            function appendLog(labelStr, result) {
+                document.getElementById('logs').prepend((() => {
+                    const element = document.createElement('div');
+                    element.classList.add('p-3');
+                    const label = document.createElement('div');
+                    label.classList.add(
+                        'font-bold', 'text-md', 'mb-2',
+                        labelStr === 'authentication' ? 'text-emerald-500' : 'text-blue-500'
+                    );
+                    label.innerText = labelStr === 'authentication' ? 'Authentication Result' : 'Registration Result';
+                    element.appendChild(label);
+                    const log = document.createElement('pre');
+                    log.classList.add('text-xs', 'p-2')
+                    log.innerText = JSON.stringify(result, null, 2);
+                    element.appendChild(log);
+                    return element;
+                })());
+                console.log(result);
+            }
+        </script>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            #logs > div:nth-child(odd) {
+                background-color: #eee;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="flex w-[100vw] h-[100vh] flex-col overflow-hidden">
+            <div class="flex-grow-0 flex-shrink-0 p-3">
+                <h1 class="font-bold text-2xl mb-2">WebAuthn Example</h1>
+                <button onclick="register()" class="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600">Register</button>
+                <button onclick="authenticate()" class="bg-emerald-500 text-white px-3 py-1 rounded-md hover:bg-emerald-600">Authenticate</button>
+            </div>
+            <div id="logs" class="flex-grow flex-shrink bg-gray-200 overflow-auto"></div>
+        </div>
+    </body>
+</html>

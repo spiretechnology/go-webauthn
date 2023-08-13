@@ -1,88 +1,58 @@
 package main
 
 import (
-	_ "embed"
-	"encoding/json"
+	"context"
 	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/spiretechnology/go-webauthn"
 )
 
-//go:embed index.html
-var indexHTML string
+var (
+	// User details. In production this should not be hard-coded.
+	user = webauthn.User{
+		ID:          "user1",
+		Name:        "user1@example.com",
+		DisplayName: "User 1",
+	}
 
-func main() {
-	wa := webauthn.New(webauthn.Options{
+	// WebAuthn instance for registering and authenticating user credentials.
+	wa = webauthn.New(webauthn.Options{
 		RP: webauthn.RelyingParty{
 			ID:   "localhost",
 			Name: "WebAuthn Example",
 		},
 		Credentials: &Credentials{},
 	})
+)
 
-	user := webauthn.User{
-		ID:          "user1",
-		Name:        "user1@example.com",
-		DisplayName: "User 1",
-	}
-
+func main() {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Add("Content-Type", "text/html")
-		w.Header().Add("Content-Length", strconv.Itoa(len(indexHTML)))
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte(indexHTML))
-	})
-	mux.HandleFunc("/api/register-challenge", func(w http.ResponseWriter, r *http.Request) {
-		challenge, _ := wa.CreateRegistration(r.Context(), user)
-		challengeJSON, _ := json.Marshal(challenge)
+	mux.Handle("/", http.FileServer(http.Dir("example/static")))
+	mux.Handle("/api/register-challenge", HttpGet(registerChallenge))
+	mux.Handle("/api/register-verify", HttpPost(registerVerify))
+	mux.Handle("/api/authenticate-challenge", HttpGet(authenticateChallenge))
+	mux.Handle("/api/authenticate-verify", HttpPost(authenticateVerify))
 
-		w.Header().Add("Content-Type", "application/json")
-		w.Header().Add("Content-Length", strconv.Itoa(len(challengeJSON)))
-		w.WriteHeader(http.StatusOK)
-		w.Write(challengeJSON)
-	})
-	mux.HandleFunc("/api/register-response", func(w http.ResponseWriter, r *http.Request) {
-		var res webauthn.RegistrationResponse
-		_ = json.NewDecoder(r.Body).Decode(&res)
-		result, _ := wa.VerifyRegistration(r.Context(), user, &res)
-		resultJSON, _ := json.Marshal(result)
-
-		w.Header().Add("Content-Type", "application/json")
-		w.Header().Add("Content-Length", strconv.Itoa(len(resultJSON)))
-		w.WriteHeader(http.StatusOK)
-		w.Write(resultJSON)
-	})
-	mux.HandleFunc("/api/authenticate-challenge", func(w http.ResponseWriter, r *http.Request) {
-		challenge, _ := wa.CreateAuthentication(r.Context(), user)
-		challengeJSON, _ := json.Marshal(challenge)
-
-		w.Header().Add("Content-Type", "application/json")
-		w.Header().Add("Content-Length", strconv.Itoa(len(challengeJSON)))
-		w.WriteHeader(http.StatusOK)
-		w.Write(challengeJSON)
-	})
-	mux.HandleFunc("/api/authenticate-response", func(w http.ResponseWriter, r *http.Request) {
-		var res webauthn.AuthenticationResponse
-		_ = json.NewDecoder(r.Body).Decode(&res)
-		result, _ := wa.VerifyAuthentication(r.Context(), user, &res)
-		resultJSON, _ := json.Marshal(result)
-
-		w.Header().Add("Content-Type", "application/json")
-		w.Header().Add("Content-Length", strconv.Itoa(len(resultJSON)))
-		w.WriteHeader(http.StatusOK)
-		w.Write(resultJSON)
-	})
-
-	server := http.Server{
-		Addr:    "127.0.0.1:4000",
-		Handler: mux,
-	}
 	fmt.Println("Listening on http://localhost:4000")
-	if err := server.ListenAndServe(); err != nil {
+	if err := http.ListenAndServe("127.0.0.1:4000", mux); err != nil {
 		log.Fatalln("Server error: ", err)
 	}
+}
+
+func registerChallenge(ctx context.Context) (*webauthn.RegistrationChallenge, error) {
+	return wa.CreateRegistration(ctx, user)
+}
+
+func registerVerify(ctx context.Context, req *webauthn.RegistrationResponse) (*webauthn.RegistrationResult, error) {
+	return wa.VerifyRegistration(ctx, user, req)
+}
+
+func authenticateChallenge(ctx context.Context) (*webauthn.AuthenticationChallenge, error) {
+	return wa.CreateAuthentication(ctx, user)
+}
+
+func authenticateVerify(ctx context.Context, req *webauthn.AuthenticationResponse) (*webauthn.AuthenticationResult, error) {
+	return wa.VerifyAuthentication(ctx, user, req)
 }
